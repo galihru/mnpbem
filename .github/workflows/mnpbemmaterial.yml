@@ -19,9 +19,6 @@ on:
       - "mnpbem-material/**"
       - "packages/mnpbem-material/**"
       - "BEM/python_packages/packages/mnpbem-material/**"
-      - ".github/workflows/mnpbemmaterial.yml"
-      - ".github/workflows/publish-mnpbem-material.yml"
-      - "BEM/python_packages/.github/workflows/publish-mnpbem-material.yml"
 
 permissions:
   contents: write
@@ -142,6 +139,24 @@ jobs:
         run: |
           python -m twine upload --skip-existing dist/*
 
+      - name: Wait until version is visible on PyPI
+        shell: bash
+        env:
+          PACKAGE_NAME: ${{ steps.metadata.outputs.PACKAGE_NAME }}
+          VERSION: ${{ steps.metadata.outputs.VERSION }}
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 18); do
+            if curl -fsSL "https://pypi.org/pypi/${PACKAGE_NAME}/${VERSION}/json" > /dev/null; then
+              echo "PyPI package ${PACKAGE_NAME}==${VERSION} is available."
+              exit 0
+            fi
+            echo "Waiting for PyPI propagation (attempt ${attempt}/18)..."
+            sleep 10
+          done
+          echo "Timed out while waiting for ${PACKAGE_NAME}==${VERSION} on PyPI." >&2
+          exit 1
+
       - name: Commit bumped version
         shell: bash
         env:
@@ -153,7 +168,16 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add "$PYPROJECT_FILE"
           git commit -m "release(mnpbem-material): v$VERSION [skip ci]"
-          git push origin HEAD:main
+          for attempt in $(seq 1 3); do
+            git pull --rebase origin main
+            if git push origin HEAD:main; then
+              exit 0
+            fi
+            echo "Push race detected, retrying (${attempt}/3)..."
+            sleep 2
+          done
+          echo "Unable to push release commit after multiple attempts." >&2
+          exit 1
 
       - name: Create and push tag
         shell: bash
@@ -161,6 +185,10 @@ jobs:
           TAG_NAME: ${{ steps.metadata.outputs.TAG_NAME }}
         run: |
           set -euo pipefail
+          if git ls-remote --tags origin "${TAG_NAME}" | grep -q "${TAG_NAME}$"; then
+            echo "Tag ${TAG_NAME} already exists on origin, skipping."
+            exit 0
+          fi
           git tag "$TAG_NAME"
           git push origin "$TAG_NAME"
 

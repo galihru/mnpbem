@@ -5,6 +5,7 @@
 [![Publish mnpbem-particles](https://github.com/galihru/mnpbem/actions/workflows/mnpbemparticles.yml/badge.svg)](https://github.com/galihru/mnpbem/actions/workflows/mnpbemparticles.yml)
 
 `mnpbem-particles` provides geometric particle primitives for nanostructure models.
+Release metadata is generated from this README so published notes remain consistent with the scientific API summary.
 
 ## Implemented Formulation
 Sphere volume:

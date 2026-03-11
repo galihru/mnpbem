@@ -46,7 +46,8 @@ where:
 Energy-wavelength conversion used in the implementation:
 
 $$
-\omega_{\mathrm{eV}} = \frac{\mathrm{EV\_TO\_NM}}{\lambda_{\mathrm{nm}}}
+\omega_{\mathrm{eV}} = \frac{C_{\mathrm{eV\cdot nm}}}{\lambda_{\mathrm{nm}}},
+\qquad C_{\mathrm{eV\cdot nm}} \approx 1239.841984
 $$
 
 Material parameters for Au, Ag, and Al are aligned with the established MNPBEM Drude-style parameterization.

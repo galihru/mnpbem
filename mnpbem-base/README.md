@@ -5,6 +5,7 @@
 [![Publish mnpbem-base](https://github.com/galihru/mnpbem/actions/workflows/mnpbembase.yml/badge.svg)](https://github.com/galihru/mnpbem/actions/workflows/mnpbembase.yml)
 
 `mnpbem-base` provides registry and factory primitives for selecting solver classes from option constraints.
+The release notes are generated directly from this scientific README for traceable package documentation.
 
 ## Implemented Formulation
 Given a requirement set for candidate class $c$, the selection score is:

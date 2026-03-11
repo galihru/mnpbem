@@ -5,6 +5,7 @@
 [![Publish mnpbem-mex](https://github.com/galihru/mnpbem/actions/workflows/mnpbemmex.yml/badge.svg)](https://github.com/galihru/mnpbem/actions/workflows/mnpbemmex.yml)
 
 `mnpbem-mex` provides acceleration-backend discovery hooks for optional compiled modules.
+Release metadata is generated from this README to keep technical notes synchronized with package artifacts.
 
 ## Scientific Context
 Acceleration backends are used to reduce numerical runtime. A common indicator is speedup:

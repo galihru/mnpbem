@@ -45,7 +45,7 @@ $$
 $$
 
 ### 3. Tabulated Material Model
-Given tabulated optical constants $(E, n, k)$, the dielectric function is:
+Given tabulated optical constants (energy, refractive index, extinction), the dielectric function is:
 
 $$
 \varepsilon = (n + i k)^2

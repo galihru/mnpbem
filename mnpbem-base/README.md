@@ -8,7 +8,7 @@
 The release notes are generated directly from this scientific README for traceable package documentation.
 
 ## Implemented Formulation
-Given a requirement set for candidate class $c$, the selection score is:
+Given a requirement set for a candidate class, the selection score is:
 
 $$
 \hat{c}=\arg\max_c\sum_j\mathbf{1}[\text{need}_{c,j}\ \text{is satisfied}]

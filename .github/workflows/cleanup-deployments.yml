@@ -2,19 +2,11 @@ name: Cleanup Deployments
 
 on:
   workflow_dispatch:
-    inputs:
-      environment:
-        description: "Environment name (for example: mnpbem-material)"
-        required: true
-        default: "mnpbem-material"
-      keep:
-        description: "Number of newest deployments to keep"
-        required: true
-        default: "3"
-      dry_run:
-        description: "Preview only (true/false)"
-        required: true
-        default: "false"
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/cleanup-deployments.yml"
 
 permissions:
   contents: read
@@ -23,39 +15,61 @@ permissions:
 jobs:
   cleanup:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        environment:
+          - mnpbem
+          - mnpbem-base
+          - mnpbem-bem
+          - mnpbem-demo
+          - mnpbem-demo-mnpbem
+          - mnpbem-greenfun
+          - mnpbem-help
+          - mnpbem-material
+          - mnpbem-mesh2d
+          - mnpbem-mex
+          - mnpbem-mie
+          - mnpbem-misc
+          - mnpbem-particles
+          - mnpbem-simulation
     steps:
-      - name: Remove old deployments
+      - name: Cleanup failed and stale deployments
         uses: actions/github-script@v7
         with:
           script: |
             const owner = context.repo.owner;
             const repo = context.repo.repo;
-            const environment = core.getInput("environment");
-            const keep = Number(core.getInput("keep"));
-            const dryRun = (core.getInput("dry_run") || "false").toLowerCase() === "true";
-
-            if (!Number.isFinite(keep) || keep < 0) {
-              core.setFailed("Input 'keep' must be a non-negative integer.");
-              return;
-            }
+            const environment = "${{ matrix.environment }}";
 
             const deployments = await github.paginate(
               github.rest.repos.listDeployments,
               { owner, repo, environment, per_page: 100 }
             );
 
-            core.info(`Found ${deployments.length} deployments in environment '${environment}'.`);
-            const targets = deployments.slice(keep);
-
-            if (targets.length === 0) {
-              core.info("Nothing to delete.");
+            core.info(`[${environment}] Found ${deployments.length} deployment(s).`);
+            if (deployments.length === 0) {
               return;
             }
 
-            core.info(`Will process ${targets.length} deployment(s). dry_run=${dryRun}`);
-            for (const dep of targets) {
-              core.info(`Deployment ${dep.id} @ ${dep.sha}`);
-              if (dryRun) continue;
+            let keptSuccessful = false;
+            for (const dep of deployments) {
+              const statuses = await github.paginate(
+                github.rest.repos.listDeploymentStatuses,
+                { owner, repo, deployment_id: dep.id, per_page: 1 }
+              );
+              const latestState = statuses.length > 0 ? statuses[0].state : "unknown";
+
+              const isSuccess = latestState === "success";
+              const shouldKeep = isSuccess && !keptSuccessful;
+
+              if (shouldKeep) {
+                keptSuccessful = true;
+                core.info(`[${environment}] Keeping deployment ${dep.id} (state=${latestState}).`);
+                continue;
+              }
+
+              core.info(`[${environment}] Deleting deployment ${dep.id} (state=${latestState}).`);
 
               try {
                 await github.rest.repos.createDeploymentStatus({
@@ -66,7 +80,7 @@ jobs:
                   auto_inactive: true,
                 });
               } catch (err) {
-                core.warning(`Could not mark deployment ${dep.id} inactive: ${err.message}`);
+                core.warning(`[${environment}] Could not mark deployment ${dep.id} inactive: ${err.message}`);
               }
 
               await github.rest.repos.deleteDeployment({
@@ -75,5 +89,3 @@ jobs:
                 deployment_id: dep.id,
               });
             }
-
-            core.info("Deployment cleanup completed.");

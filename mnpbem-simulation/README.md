@@ -8,7 +8,7 @@
 Release metadata is generated from this README so installation notes and mathematical context stay synchronized.
 
 ## Implemented Formulation
-For sampled wavelengths $\lambda_i$, the response is evaluated as:
+For a sampled wavelength grid, the response is evaluated as:
 
 $$
 S_i = f(\lambda_i)

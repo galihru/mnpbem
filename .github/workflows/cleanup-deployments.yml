@@ -1,4 +1,5 @@
 name: Cleanup Deployments
+# Keeps the newest successful deployment per environment; if none exists, keeps the newest entry.
 
 on:
   workflow_dispatch:

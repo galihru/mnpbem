@@ -1,4 +1,4 @@
-name: Publish mnpbem-demo-mnpbem
+﻿name: Publish mnpbem-demo-mnpbem
 
 on:
   workflow_dispatch:
@@ -28,7 +28,9 @@ jobs:
   build_publish_and_release:
     if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
-    environment: mnpbem-demo-mnpbem
+    environment:
+      name: mnpbem-demo-mnpbem
+      url: https://pypi.org/project/mnpbem-demo-mnpbem/
 
     steps:
       - name: Check out code
@@ -240,3 +242,4 @@ jobs:
           name: ${{ steps.metadata.outputs.PACKAGE_NAME }} v${{ steps.metadata.outputs.VERSION }}
           files: dist/*
           body_path: RELEASE_BODY.md
+

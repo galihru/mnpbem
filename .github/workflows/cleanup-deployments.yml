@@ -1,0 +1,79 @@
+name: Cleanup Deployments
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Environment name (for example: mnpbem-material)"
+        required: true
+        default: "mnpbem-material"
+      keep:
+        description: "Number of newest deployments to keep"
+        required: true
+        default: "3"
+      dry_run:
+        description: "Preview only (true/false)"
+        required: true
+        default: "false"
+
+permissions:
+  contents: read
+  deployments: write
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Remove old deployments
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const environment = core.getInput("environment");
+            const keep = Number(core.getInput("keep"));
+            const dryRun = (core.getInput("dry_run") || "false").toLowerCase() === "true";
+
+            if (!Number.isFinite(keep) || keep < 0) {
+              core.setFailed("Input 'keep' must be a non-negative integer.");
+              return;
+            }
+
+            const deployments = await github.paginate(
+              github.rest.repos.listDeployments,
+              { owner, repo, environment, per_page: 100 }
+            );
+
+            core.info(`Found ${deployments.length} deployments in environment '${environment}'.`);
+            const targets = deployments.slice(keep);
+
+            if (targets.length === 0) {
+              core.info("Nothing to delete.");
+              return;
+            }
+
+            core.info(`Will process ${targets.length} deployment(s). dry_run=${dryRun}`);
+            for (const dep of targets) {
+              core.info(`Deployment ${dep.id} @ ${dep.sha}`);
+              if (dryRun) continue;
+
+              try {
+                await github.rest.repos.createDeploymentStatus({
+                  owner,
+                  repo,
+                  deployment_id: dep.id,
+                  state: "inactive",
+                  auto_inactive: true,
+                });
+              } catch (err) {
+                core.warning(`Could not mark deployment ${dep.id} inactive: ${err.message}`);
+              }
+
+              await github.rest.repos.deleteDeployment({
+                owner,
+                repo,
+                deployment_id: dep.id,
+              });
+            }
+
+            core.info("Deployment cleanup completed.");

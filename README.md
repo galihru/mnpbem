@@ -4,6 +4,8 @@
 [![Python versions](https://img.shields.io/pypi/pyversions/mnpbem.svg)](https://pypi.org/project/mnpbem/)
 [![Publish mnpbem](https://github.com/galihru/mnpbem/actions/workflows/mnpbem.yml/badge.svg?branch=main)](https://github.com/galihru/mnpbem/actions/workflows/mnpbem.yml)
 
+![Example Image](https://raw.githubusercontent.com/galihru/mnpbem/c77a7cf0d745bb0fefb81f98bff0611a9d9afda9/mnpbem/example%20electric%20field%20demo.png)
+
 This repository hosts a modular Python implementation of scientific workflows inspired by the MNPBEM ecosystem.
 The architecture separates material models, geometry, kernels, and solvers into independently publishable packages while preserving a coherent end-to-end pipeline.
 

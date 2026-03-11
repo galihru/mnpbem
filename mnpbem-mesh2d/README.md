@@ -6,19 +6,19 @@
 Signed doubled triangle area:
 
 ```text
-A_2 = (\mathbf{d}_{12})_x(\mathbf{d}_{13})_y-(\mathbf{d}_{12})_y(\mathbf{d}_{13})_x
+A2 = d12_x * d13_y - d12_y * d13_x
 ```
 
 Circumcircle radius squared:
 
 ```text
-R^2=\|\mathbf{p}_1-\mathbf{c}\|^2
+R2 = ||p1 - c||^2
 ```
 
 Mesh quality indicator:
 
 ```text
-q = 3.4641\,\frac{|A_2|}{\|\mathbf{d}_{12}\|^2+\|\mathbf{d}_{13}\|^2+\|\mathbf{d}_{23}\|^2},\quad 0\le q\le 1
+q = (2 * sqrt(3) * |A2|) / (||d12||^2 + ||d13||^2 + ||d23||^2), 0 <= q <= 1
 ```
 
 ## Implementation

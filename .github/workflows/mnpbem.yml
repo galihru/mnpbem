@@ -19,6 +19,7 @@ on:
       - "mnpbem/**"
       - "packages/mnpbem/**"
       - "BEM/python_packages/packages/mnpbem/**"
+      - ".github/workflows/mnpbem.yml"
 
 permissions:
   contents: write
@@ -74,9 +75,10 @@ jobs:
 
           path = Path(os.environ["PYPROJECT_FILE"])
           event_name = os.environ["EVENT_NAME"]
+          should_publish = event_name == "workflow_dispatch"
           bump_kind = (os.environ.get("INPUT_BUMP") or "").strip().lower()
-          if event_name != "workflow_dispatch" or bump_kind not in {"patch", "minor", "major"}:
-              bump_kind = "patch"
+          if not should_publish or bump_kind not in {"patch", "minor", "major"}:
+              bump_kind = "none"
 
           text = path.read_text(encoding="utf-8")
           m = re.search(r'(?m)^version\s*=\s*"(\d+)\.(\d+)\.(\d+)"\s*$', text)
@@ -84,21 +86,24 @@ jobs:
               raise SystemExit("version field not found in pyproject.toml")
 
           major, minor, patch = map(int, m.groups())
-          if bump_kind == "major":
-              major, minor, patch = major + 1, 0, 0
-          elif bump_kind == "minor":
-              minor, patch = minor + 1, 0
+          if should_publish:
+              if bump_kind == "major":
+                  major, minor, patch = major + 1, 0, 0
+              elif bump_kind == "minor":
+                  minor, patch = minor + 1, 0
+              else:
+                  patch += 1
+              version = f"{major}.{minor}.{patch}"
+              updated = re.sub(
+                  r'(?m)^version\s*=\s*"\d+\.\d+\.\d+"\s*$',
+                  f'version = "{version}"',
+                  text,
+                  count=1,
+              )
+              path.write_text(updated, encoding="utf-8")
           else:
-              patch += 1
-
-          version = f"{major}.{minor}.{patch}"
-          updated = re.sub(
-              r'(?m)^version\s*=\s*"\d+\.\d+\.\d+"\s*$',
-              f'version = "{version}"',
-              text,
-              count=1,
-          )
-          path.write_text(updated, encoding="utf-8")
+              version = f"{major}.{minor}.{patch}"
+              updated = text
 
           data = tomllib.loads(updated)
           project = data["project"]
@@ -113,6 +118,7 @@ jobs:
             fh.write(f"VERSION={version}\n")
             fh.write(f"TAG_NAME={tag}\n")
             fh.write(f"BUMP_KIND={bump_kind}\n")
+            fh.write(f"SHOULD_PUBLISH={'true' if should_publish else 'false'}\n")
             fh.write("RELATED_DEPS<<EOF\n")
             for dep in related:
               fh.write(f"{dep}\n")
@@ -136,6 +142,7 @@ jobs:
         run: python -m twine check dist/*
 
       - name: Publish to PyPI
+        if: steps.metadata.outputs.SHOULD_PUBLISH == 'true'
         env:
           TWINE_USERNAME: __token__
           TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
@@ -143,6 +150,7 @@ jobs:
           python -m twine upload --skip-existing dist/*
 
       - name: Wait until version is visible on PyPI
+        if: steps.metadata.outputs.SHOULD_PUBLISH == 'true'
         shell: bash
         env:
           PACKAGE_NAME: ${{ steps.metadata.outputs.PACKAGE_NAME }}
@@ -161,6 +169,7 @@ jobs:
           exit 1
 
       - name: Commit bumped version
+        if: steps.metadata.outputs.SHOULD_PUBLISH == 'true'
         shell: bash
         env:
           PYPROJECT_FILE: ${{ steps.locate.outputs.PYPROJECT_FILE }}
@@ -183,6 +192,7 @@ jobs:
           exit 1
 
       - name: Create and push tag
+        if: steps.metadata.outputs.SHOULD_PUBLISH == 'true'
         shell: bash
         env:
           TAG_NAME: ${{ steps.metadata.outputs.TAG_NAME }}
@@ -196,6 +206,7 @@ jobs:
           git push origin "$TAG_NAME"
 
       - name: Create GitHub release body
+        if: steps.metadata.outputs.SHOULD_PUBLISH == 'true'
         shell: bash
         env:
           PACKAGE_DIR: ${{ steps.locate.outputs.PACKAGE_DIR }}
@@ -237,6 +248,7 @@ jobs:
           } > RELEASE_BODY.md
 
       - name: Publish GitHub Release
+        if: steps.metadata.outputs.SHOULD_PUBLISH == 'true'
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.metadata.outputs.TAG_NAME }}

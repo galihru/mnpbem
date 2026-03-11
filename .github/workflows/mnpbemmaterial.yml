@@ -19,6 +19,7 @@ on:
       - "mnpbem-material/**"
       - "packages/mnpbem-material/**"
       - "BEM/python_packages/packages/mnpbem-material/**"
+      - ".github/workflows/mnpbemmaterial.yml"
       - ".github/workflows/publish-mnpbem-material.yml"
       - "BEM/python_packages/.github/workflows/publish-mnpbem-material.yml"
 

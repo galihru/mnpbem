@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "mnpbem-material"
-version = "0.1.10"
+version = "0.1.11"
 description = "Material dielectric models for plasmonic electrodynamics in MNPBEM-Python."
 readme = { file = "README_PYPI.md", content-type = "text/markdown" }
 requires-python = ">=3.10"

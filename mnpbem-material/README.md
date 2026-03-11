@@ -51,6 +51,7 @@ $$
 $$
 
 Material parameters for Au, Ag, and Al are aligned with the established MNPBEM Drude-style parameterization.
+The implementation stores this conversion constant explicitly to avoid unit ambiguity in numerical workflows.
 
 ### 3. Tabulated Material Model
 Given tabulated optical constants $(E, n, k)$, the dielectric function is:

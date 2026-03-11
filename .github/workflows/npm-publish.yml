@@ -56,18 +56,21 @@ jobs:
       - name: Publish mnp-material → npmjs.com
         working-directory: npm-packages/packages/mnp-material
         run: npm publish
+        continue-on-error: true
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Publish mnp-mie → npmjs.com
         working-directory: npm-packages/packages/mnp-mie
         run: npm publish
+        continue-on-error: true
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Publish mnp → npmjs.com
         working-directory: npm-packages/packages/mnp
         run: npm publish
+        continue-on-error: true
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 

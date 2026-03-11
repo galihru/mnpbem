@@ -43,7 +43,7 @@ where:
 - $\gamma$ is the damping constant.
 - $\omega$ is the angular frequency.
 
-Energy-wavelength conversion used in the implementation:
+Energy-wavelength conversion used in the implementation (using the physical constant in eV*nm units):
 
 $$
 \omega_{\mathrm{eV}} = \frac{C_{\mathrm{eV\cdot nm}}}{\lambda_{\mathrm{nm}}},

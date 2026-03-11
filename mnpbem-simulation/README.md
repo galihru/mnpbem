@@ -5,6 +5,7 @@
 [![Publish mnpbem-simulation](https://github.com/galihru/mnpbem/actions/workflows/mnpbemsimulation.yml/badge.svg)](https://github.com/galihru/mnpbem/actions/workflows/mnpbemsimulation.yml)
 
 `mnpbem-simulation` orchestrates vectorized spectrum evaluation over wavelength grids.
+Release metadata is generated from this README so installation notes and mathematical context stay synchronized.
 
 ## Implemented Formulation
 For sampled wavelengths $\lambda_i$, the response is evaluated as:

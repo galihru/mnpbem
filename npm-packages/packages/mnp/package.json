@@ -1,0 +1,27 @@
+{
+  "name": "@galihru/mnp",
+  "version": "0.1.0",
+  "description": "Main integrated scientific package for MNP material and Mie formulations.",
+  "type": "module",
+  "main": "./src/index.js",
+  "exports": {
+    ".": "./src/index.js"
+  },
+  "files": [
+    "src",
+    "examples",
+    "README.md"
+  ],
+  "author": "GALIH RIDHO UTOMO <g4lihru@students.unnes.ac.id>",
+  "license": "GPL-2.0-only",
+  "dependencies": {
+    "@galihru/mnp-material": "0.1.0",
+    "@galihru/mnp-mie": "0.1.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "test": "node --test"
+  }
+}

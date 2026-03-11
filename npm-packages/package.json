@@ -1,0 +1,13 @@
+{
+  "name": "@galihru/mnp-monorepo",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Monorepo for MNP scientific JavaScript packages.",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "test": "npm run test --workspaces",
+    "pack:all": "npm pack --workspaces"
+  }
+}

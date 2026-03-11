@@ -1,0 +1,6 @@
+@galihru:registry=https://registry.npmjs.org/
+//registry.npmjs.org/:_authToken=${NPM_TOKEN}
+
+# For GitHub Packages publish:
+# @galihru:registry=https://npm.pkg.github.com/
+# //npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}

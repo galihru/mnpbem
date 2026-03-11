@@ -1,0 +1,22 @@
+{
+  "name": "@galihru/mnp-material",
+  "version": "0.1.0",
+  "description": "Material dielectric models for plasmonic electrodynamics.",
+  "type": "module",
+  "main": "./src/index.js",
+  "exports": {
+    ".": "./src/index.js"
+  },
+  "files": [
+    "src",
+    "README.md"
+  ],
+  "author": "GALIH RIDHO UTOMO <g4lihru@students.unnes.ac.id>",
+  "license": "GPL-2.0-only",
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "test": "node --test"
+  }
+}

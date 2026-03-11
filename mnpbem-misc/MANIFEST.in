@@ -1,8 +1,6 @@
-include README.md
-include pyproject.toml
-graft src/mnpbem_misc
-graft examples
 prune tests
-prune build
 prune .pytest_cache
-global-exclude __pycache__ *.py[cod]
+prune build
+prune dist
+prune dist_check
+global-exclude __pycache__ *.py[cod] *.pyo

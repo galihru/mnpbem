@@ -27,7 +27,6 @@ dependencies = [
 Homepage = "https://pypi.org/project/mnpbem-material/"
 Repository = "https://github.com/galihru/mnpbem/tree/main/mnpbem-material"
 Source = "https://github.com/galihru/mnpbem"
-
 [tool.setuptools]
 package-dir = {"" = "src"}
 
@@ -36,3 +35,6 @@ where = ["src"]
 
 [tool.setuptools.package-data]
 mnpbem_material = ["data/*.dat"]
+
+
+

@@ -1,0 +1,242 @@
+name: Publish mnpbem-demo-mnpbem
+
+on:
+  workflow_dispatch:
+    inputs:
+      bump:
+        description: "Version increment type"
+        required: true
+        default: patch
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+  push:
+    branches:
+      - main
+    paths:
+      - "mnpbem-demo-mnpbem/**"
+      - "packages/mnpbem-demo-mnpbem/**"
+      - "BEM/python_packages/packages/mnpbem-demo-mnpbem/**"
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  build_publish_and_release:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    environment: mnpbem-demo-mnpbem
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Locate package directory
+        id: locate
+        shell: bash
+        run: |
+          set -euo pipefail
+          for candidate in \
+            "mnpbem-demo-mnpbem" \
+            "packages/mnpbem-demo-mnpbem" \
+            "BEM/python_packages/packages/mnpbem-demo-mnpbem"; do
+            if [ -f "$candidate/pyproject.toml" ]; then
+              echo "PACKAGE_DIR=$candidate" >> "$GITHUB_OUTPUT"
+              echo "PYPROJECT_FILE=$candidate/pyproject.toml" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+          done
+          echo "Unable to find mnpbem-demo-mnpbem/pyproject.toml" >&2
+          exit 1
+
+      - name: Read package metadata
+        id: metadata
+        shell: bash
+        env:
+          PYPROJECT_FILE: ${{ steps.locate.outputs.PYPROJECT_FILE }}
+          EVENT_NAME: ${{ github.event_name }}
+          INPUT_BUMP: ${{ github.event.inputs.bump }}
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import os
+          import re
+          import tomllib
+          from pathlib import Path
+
+          path = Path(os.environ["PYPROJECT_FILE"])
+          event_name = os.environ["EVENT_NAME"]
+          bump_kind = (os.environ.get("INPUT_BUMP") or "").strip().lower()
+          if event_name != "workflow_dispatch" or bump_kind not in {"patch", "minor", "major"}:
+              bump_kind = "patch"
+
+          text = path.read_text(encoding="utf-8")
+          m = re.search(r'(?m)^version\s*=\s*"(\d+)\.(\d+)\.(\d+)"\s*$', text)
+          if not m:
+              raise SystemExit("version field not found in pyproject.toml")
+
+          major, minor, patch = map(int, m.groups())
+          if bump_kind == "major":
+              major, minor, patch = major + 1, 0, 0
+          elif bump_kind == "minor":
+              minor, patch = minor + 1, 0
+          else:
+              patch += 1
+
+          version = f"{major}.{minor}.{patch}"
+          updated = re.sub(
+              r'(?m)^version\s*=\s*"\d+\.\d+\.\d+"\s*$',
+              f'version = "{version}"',
+              text,
+              count=1,
+          )
+          path.write_text(updated, encoding="utf-8")
+
+          data = tomllib.loads(updated)
+          project = data["project"]
+          name = project["name"]
+          deps = project.get("dependencies", [])
+          related = [dep for dep in deps if dep.strip().startswith("mnpbem-")]
+          tag = f"{name}-v{version}"
+
+          out = Path(os.environ["GITHUB_OUTPUT"])
+          with out.open("a", encoding="utf-8") as fh:
+            fh.write(f"PACKAGE_NAME={name}\n")
+            fh.write(f"VERSION={version}\n")
+            fh.write(f"TAG_NAME={tag}\n")
+            fh.write(f"BUMP_KIND={bump_kind}\n")
+            fh.write("RELATED_DEPS<<EOF\n")
+            for dep in related:
+              fh.write(f"{dep}\n")
+            fh.write("EOF\n")
+          PY
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install build & twine
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install build twine
+
+      - name: Build sdist & wheel
+        run: python -m build --sdist --wheel --outdir dist "${{ steps.locate.outputs.PACKAGE_DIR }}"
+
+      - name: Verify package metadata
+        run: python -m twine check dist/*
+
+      - name: Publish to PyPI
+        env:
+          TWINE_USERNAME: __token__
+          TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
+        run: |
+          python -m twine upload --skip-existing dist/*
+
+      - name: Wait until version is visible on PyPI
+        shell: bash
+        env:
+          PACKAGE_NAME: ${{ steps.metadata.outputs.PACKAGE_NAME }}
+          VERSION: ${{ steps.metadata.outputs.VERSION }}
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 30); do
+            if curl -fsSL "https://pypi.org/pypi/${PACKAGE_NAME}/${VERSION}/json" > /dev/null; then
+              echo "PyPI package ${PACKAGE_NAME}==${VERSION} is available."
+              exit 0
+            fi
+            echo "Waiting for PyPI propagation (attempt ${attempt}/30)..."
+            sleep 10
+          done
+          echo "Timed out while waiting for ${PACKAGE_NAME}==${VERSION} on PyPI." >&2
+          exit 1
+
+      - name: Commit bumped version
+        shell: bash
+        env:
+          PYPROJECT_FILE: ${{ steps.locate.outputs.PYPROJECT_FILE }}
+          VERSION: ${{ steps.metadata.outputs.VERSION }}
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "$PYPROJECT_FILE"
+          git commit -m "release(mnpbem-demo-mnpbem): v$VERSION [skip ci]"
+          for attempt in $(seq 1 3); do
+            git pull --rebase origin main
+            if git push origin HEAD:main; then
+              exit 0
+            fi
+            echo "Push race detected, retrying (${attempt}/3)..."
+            sleep 2
+          done
+          echo "Unable to push release commit after multiple attempts." >&2
+          exit 1
+
+      - name: Create and push tag
+        shell: bash
+        env:
+          TAG_NAME: ${{ steps.metadata.outputs.TAG_NAME }}
+        run: |
+          set -euo pipefail
+          if git ls-remote --tags origin "${TAG_NAME}" | grep -q "${TAG_NAME}$"; then
+            echo "Tag ${TAG_NAME} already exists on origin, skipping."
+            exit 0
+          fi
+          git tag "$TAG_NAME"
+          git push origin "$TAG_NAME"
+
+      - name: Create GitHub release body
+        shell: bash
+        env:
+          PACKAGE_DIR: ${{ steps.locate.outputs.PACKAGE_DIR }}
+          PACKAGE_NAME: ${{ steps.metadata.outputs.PACKAGE_NAME }}
+          VERSION: ${{ steps.metadata.outputs.VERSION }}
+          BUMP_KIND: ${{ steps.metadata.outputs.BUMP_KIND }}
+        run: |
+          set -euo pipefail
+          readme_path="$PACKAGE_DIR/README.md"
+          related_deps="$(cat <<'EOF'
+          ${{ steps.metadata.outputs.RELATED_DEPS }}
+          EOF
+          )"
+          has_related="$(echo "$related_deps" | tr -d '[:space:]')"
+
+          {
+            echo "# ${PACKAGE_NAME} v${VERSION}"
+            echo
+            echo "## Installation"
+            echo '```bash'
+            echo "pip install ${PACKAGE_NAME}==${VERSION}"
+            echo '```'
+            echo
+            echo "- PyPI: https://pypi.org/project/${PACKAGE_NAME}/${VERSION}/"
+            echo "- Bump type: \`${BUMP_KIND}\`"
+            echo
+            echo "## Related mnpbem Dependencies"
+            if [ -n "$has_related" ]; then
+              echo '```text'
+              printf "%s\n" "$related_deps"
+              echo '```'
+            else
+              echo "None"
+            fi
+            echo
+            echo "---"
+            echo
+            cat "$readme_path"
+          } > RELEASE_BODY.md
+
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.metadata.outputs.TAG_NAME }}
+          name: ${{ steps.metadata.outputs.PACKAGE_NAME }} v${{ steps.metadata.outputs.VERSION }}
+          files: dist/*
+          body_path: RELEASE_BODY.md

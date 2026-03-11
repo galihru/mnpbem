@@ -205,3 +205,10 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# MNPBEM package-local development artifacts
+mnpbem*/tests/
+mnpbem*/build/
+mnpbem*/.pytest_cache/
+mnpbem*/dist/
+mnpbem*/dist_check/

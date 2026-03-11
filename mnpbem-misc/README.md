@@ -1,5 +1,9 @@
 # mnpbem-misc
 
+[![PyPI version](https://img.shields.io/pypi/v/mnpbem-misc.svg)](https://pypi.org/project/mnpbem-misc/)
+[![Python versions](https://img.shields.io/pypi/pyversions/mnpbem-misc.svg)](https://pypi.org/project/mnpbem-misc/)
+[![Publish mnpbem-misc](https://github.com/galihru/mnpbem/actions/workflows/mnpbemmisc.yml/badge.svg)](https://github.com/galihru/mnpbem/actions/workflows/mnpbemmisc.yml)
+
 `mnpbem-misc` provides shared numerical utilities used across MNPBEM-Python submodules.
 
 ## Features
@@ -8,24 +12,20 @@
 - Tensor-aware linear algebra helpers (`matmul`, `matcross`, `inner`, `outer`, `spdiag`).
 
 ## Mathematical Formulations
-
-### 1. Photon Energy-Wavelength Conversion
-The conversion between photon energy and wavelength is:
+Photon energy-wavelength conversion:
 
 $$
 \lambda_{\mathrm{nm}} = \frac{C_{\mathrm{eV\cdot nm}}}{E_{\mathrm{eV}}},
 \qquad C_{\mathrm{eV\cdot nm}} \approx 1239.841984
 $$
 
-### 2. Euclidean Vector Norm
-For a vector $\mathbf{v}$:
+Euclidean vector norm:
 
 $$
 \|\mathbf{v}\|_2 = \sqrt{\sum_i |v_i|^2}
 $$
 
-### 3. Vector Normalization
-Normalized vector:
+Normalization:
 
 $$
 \tilde{\mathbf{v}} = \frac{\mathbf{v}}{\|\mathbf{v}_{\mathrm{ref}}\|_2}
@@ -37,7 +37,6 @@ $$
 - Linear algebra helpers: `src/mnpbem_misc/linalg.py`
 
 ## Dependencies
-Runtime dependencies are installed automatically by `pip`:
 - `numpy>=1.24`
 
 ## Installation
@@ -45,7 +44,7 @@ Runtime dependencies are installed automatically by `pip`:
 pip install mnpbem-misc
 ```
 
-## Example Usage
+## Example
 Runnable example:
 - `examples/basic_usage.py`
 

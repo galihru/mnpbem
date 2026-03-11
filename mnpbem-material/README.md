@@ -1,5 +1,9 @@
 # mnpbem-material
 
+[![PyPI version](https://img.shields.io/pypi/v/mnpbem-material.svg)](https://pypi.org/project/mnpbem-material/)
+[![Python versions](https://img.shields.io/pypi/pyversions/mnpbem-material.svg)](https://pypi.org/project/mnpbem-material/)
+[![Publish mnpbem-material](https://github.com/galihru/mnpbem/actions/workflows/mnpbemmaterial.yml/badge.svg)](https://github.com/galihru/mnpbem/actions/workflows/mnpbemmaterial.yml)
+
 `mnpbem-material` implements dielectric-function models used in plasmonic electrodynamics.
 The module provides analytical material models and tabulated optical constants for metals such as Au, Ag, and Al.
 
@@ -24,10 +28,6 @@ $$
 k(\lambda) = \frac{2\pi}{\lambda}\sqrt{\varepsilon}
 $$
 
-where:
-- $\varepsilon_0$ is the constant dielectric permittivity.
-- $\lambda$ is the wavelength.
-
 ### 2. Drude Model
 For free-electron metal response:
 
@@ -37,21 +37,12 @@ $$
 \frac{\omega_p^2}{\omega(\omega + i\gamma)}
 $$
 
-where:
-- $\varepsilon_\infty$ is the high-frequency dielectric constant.
-- $\omega_p$ is the plasma frequency.
-- $\gamma$ is the damping constant.
-- $\omega$ is the angular frequency.
-
-Energy-wavelength conversion used in the implementation (using the physical constant in eV*nm units):
+Energy-wavelength conversion used in the implementation:
 
 $$
 \omega_{\mathrm{eV}} = \frac{C_{\mathrm{eV\cdot nm}}}{\lambda_{\mathrm{nm}}},
 \qquad C_{\mathrm{eV\cdot nm}} \approx 1239.841984
 $$
-
-Material parameters for Au, Ag, and Al are aligned with the established MNPBEM Drude-style parameterization.
-The implementation stores this conversion constant explicitly to avoid unit ambiguity in numerical workflows.
 
 ### 3. Tabulated Material Model
 Given tabulated optical constants $(E, n, k)$, the dielectric function is:
@@ -60,14 +51,11 @@ $$
 \varepsilon = (n + i k)^2
 $$
 
-Interpolation is performed in the wavelength domain after converting tabulated energy values.
-
 ## Implementation
 - Core implementation: `src/mnpbem_material/models.py`
 - Material datasets: `src/mnpbem_material/data/*.dat`
 
 ## Dependencies
-Runtime dependencies are installed automatically by `pip`:
 - `numpy>=1.24`
 
 ## Installation
@@ -75,7 +63,7 @@ Runtime dependencies are installed automatically by `pip`:
 pip install mnpbem-material
 ```
 
-## Example Usage
+## Example
 Runnable example:
 - `examples/basic_usage.py`
 

@@ -1,0 +1,49 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mnpbem"
+version = "0.1.0"
+description = "Meta-package that installs all MNPBEM Python submodules."
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [
+  { name = "GALIH RIDHO UTOMO", email = "g4lihru@students.unnes.ac.id" }
+]
+license = "GPL-2.0-only"
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Science/Research",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Topic :: Scientific/Engineering :: Physics"
+]
+dependencies = [
+  "mnpbem-base>=0.1.0",
+  "mnpbem-bem>=0.1.0",
+  "mnpbem-demo>=0.1.0",
+  "mnpbem-demo-mnpbem>=0.1.0",
+  "mnpbem-greenfun>=0.1.0",
+  "mnpbem-help>=0.1.0",
+  "mnpbem-material>=0.1.0",
+  "mnpbem-mesh2d>=0.1.0",
+  "mnpbem-mex>=0.1.0",
+  "mnpbem-mie>=0.1.0",
+  "mnpbem-misc>=0.1.0",
+  "mnpbem-particles>=0.1.0",
+  "mnpbem-simulation>=0.1.0",
+]
+
+[project.urls]
+Homepage = "https://pypi.org/project/mnpbem/"
+Repository = "https://github.com/galihru/mnpbem/tree/main/mnpbem"
+Source = "https://github.com/galihru/mnpbem"
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+
+

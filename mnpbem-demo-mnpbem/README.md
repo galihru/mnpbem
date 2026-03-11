@@ -6,7 +6,7 @@
 The module acts as a deterministic controller for reproducible simulation sequences:
 
 $$
-D = \left\{(\lambda_i,\,\mathrm{configuration}_i)\,\middle|\,i=1,2,\ldots,N\right\}
+D = \{(\lambda_i,\,\mathrm{configuration}_i)\,|\,i=1,2,\ldots,N\}
 $$
 
 ## Implementation

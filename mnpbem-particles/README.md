@@ -1,8 +1,5 @@
 # mnpbem-particles
 
-[![PyPI version](https://img.shields.io/pypi/v/mnpbem-particles.svg)](https://pypi.org/project/mnpbem-particles/)
-[![Python versions](https://img.shields.io/pypi/pyversions/mnpbem-particles.svg)](https://pypi.org/project/mnpbem-particles/)
-
 `mnpbem-particles` provides geometric particle primitives for nanostructure models.
 Release metadata is generated from this README so published notes remain consistent with the scientific API summary.
 

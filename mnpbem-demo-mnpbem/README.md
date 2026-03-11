@@ -1,8 +1,5 @@
 # mnpbem-demo-mnpbem
 
-[![PyPI version](https://img.shields.io/pypi/v/mnpbem-demo-mnpbem.svg)](https://pypi.org/project/mnpbem-demo-mnpbem/)
-[![Python versions](https://img.shields.io/pypi/pyversions/mnpbem-demo-mnpbem.svg)](https://pypi.org/project/mnpbem-demo-mnpbem/)
-
 `mnpbem-demo-mnpbem` adds a thin orchestration layer for scripted demo pipelines.
 
 ## Scientific Context

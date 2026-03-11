@@ -1,8 +1,5 @@
 # mnpbem-mie
 
-[![PyPI version](https://img.shields.io/pypi/v/mnpbem-mie.svg)](https://pypi.org/project/mnpbem-mie/)
-[![Python versions](https://img.shields.io/pypi/pyversions/mnpbem-mie.svg)](https://pypi.org/project/mnpbem-mie/)
-
 `mnpbem-mie` provides Rayleigh-limit scattering formulas for small spherical particles.
 
 ## Implemented Formulations

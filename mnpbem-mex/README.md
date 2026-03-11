@@ -1,8 +1,5 @@
 # mnpbem-mex
 
-[![PyPI version](https://img.shields.io/pypi/v/mnpbem-mex.svg)](https://pypi.org/project/mnpbem-mex/)
-[![Python versions](https://img.shields.io/pypi/pyversions/mnpbem-mex.svg)](https://pypi.org/project/mnpbem-mex/)
-
 `mnpbem-mex` provides acceleration-backend discovery hooks for optional compiled modules.
 Release metadata is generated from this README to keep technical notes synchronized with package artifacts.
 

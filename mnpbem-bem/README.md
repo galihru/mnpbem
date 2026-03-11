@@ -1,8 +1,5 @@
 # mnpbem-bem
 
-[![PyPI version](https://img.shields.io/pypi/v/mnpbem-bem.svg)](https://pypi.org/project/mnpbem-bem/)
-[![Python versions](https://img.shields.io/pypi/pyversions/mnpbem-bem.svg)](https://pypi.org/project/mnpbem-bem/)
-
 `mnpbem-bem` implements a minimal linear-response solve interface for complex frequency-domain systems.
 Release metadata is generated from this README to keep publication notes aligned with the implemented solver model.
 

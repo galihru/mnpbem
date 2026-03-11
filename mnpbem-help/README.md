@@ -1,8 +1,5 @@
 # mnpbem-help
 
-[![PyPI version](https://img.shields.io/pypi/v/mnpbem-help.svg)](https://pypi.org/project/mnpbem-help/)
-[![Python versions](https://img.shields.io/pypi/pyversions/mnpbem-help.svg)](https://pypi.org/project/mnpbem-help/)
-
 `mnpbem-help` exposes canonical documentation/reference module lists for user navigation.
 
 ## Scientific Context

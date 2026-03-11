@@ -1,8 +1,5 @@
 # mnpbem-demo
 
-[![PyPI version](https://img.shields.io/pypi/v/mnpbem-demo.svg)](https://pypi.org/project/mnpbem-demo/)
-[![Python versions](https://img.shields.io/pypi/pyversions/mnpbem-demo.svg)](https://pypi.org/project/mnpbem-demo/)
-
 `mnpbem-demo` provides reproducible spectral grids for controlled numerical experiments.
 
 ## Implemented Formulation

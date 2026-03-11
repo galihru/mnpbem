@@ -1,8 +1,5 @@
 # mnpbem-misc
 
-[![PyPI version](https://img.shields.io/pypi/v/mnpbem-misc.svg)](https://pypi.org/project/mnpbem-misc/)
-[![Python versions](https://img.shields.io/pypi/pyversions/mnpbem-misc.svg)](https://pypi.org/project/mnpbem-misc/)
-
 `mnpbem-misc` provides shared numerical utilities used across MNPBEM-Python submodules.
 
 ## Features

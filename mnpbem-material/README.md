@@ -1,8 +1,5 @@
 # mnpbem-material
 
-[![PyPI version](https://img.shields.io/pypi/v/mnpbem-material.svg)](https://pypi.org/project/mnpbem-material/)
-[![Python versions](https://img.shields.io/pypi/pyversions/mnpbem-material.svg)](https://pypi.org/project/mnpbem-material/)
-
 `mnpbem-material` implements dielectric-function models used in plasmonic electrodynamics.
 The module provides analytical material models and tabulated optical constants for metals such as Au, Ag, and Al.
 

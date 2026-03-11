@@ -1,8 +1,5 @@
 # mnpbem-base
 
-[![PyPI version](https://img.shields.io/pypi/v/mnpbem-base.svg)](https://pypi.org/project/mnpbem-base/)
-[![Python versions](https://img.shields.io/pypi/pyversions/mnpbem-base.svg)](https://pypi.org/project/mnpbem-base/)
-
 `mnpbem-base` provides registry and factory primitives for selecting solver classes from option constraints.
 The release notes are generated directly from this scientific README for traceable package documentation.
 

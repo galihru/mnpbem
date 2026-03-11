@@ -1,8 +1,5 @@
 # mnpbem-simulation
 
-[![PyPI version](https://img.shields.io/pypi/v/mnpbem-simulation.svg)](https://pypi.org/project/mnpbem-simulation/)
-[![Python versions](https://img.shields.io/pypi/pyversions/mnpbem-simulation.svg)](https://pypi.org/project/mnpbem-simulation/)
-
 `mnpbem-simulation` orchestrates vectorized spectrum evaluation over wavelength grids.
 Release metadata is generated from this README so installation notes and mathematical context stay synchronized.
 

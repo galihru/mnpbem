@@ -1,8 +1,5 @@
 # mnpbem-mesh2d
 
-[![PyPI version](https://img.shields.io/pypi/v/mnpbem-mesh2d.svg)](https://pypi.org/project/mnpbem-mesh2d/)
-[![Python versions](https://img.shields.io/pypi/pyversions/mnpbem-mesh2d.svg)](https://pypi.org/project/mnpbem-mesh2d/)
-
 `mnpbem-mesh2d` provides triangle geometry operators used in mesh-quality and circumcircle computations.
 
 ## Implemented Formulations

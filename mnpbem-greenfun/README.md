@@ -1,8 +1,5 @@
 # mnpbem-greenfun
 
-[![PyPI version](https://img.shields.io/pypi/v/mnpbem-greenfun.svg)](https://pypi.org/project/mnpbem-greenfun/)
-[![Python versions](https://img.shields.io/pypi/pyversions/mnpbem-greenfun.svg)](https://pypi.org/project/mnpbem-greenfun/)
-
 `mnpbem-greenfun` provides baseline free-space Green-function kernels for frequency-domain electrodynamics.
 
 ## Implemented Formulations

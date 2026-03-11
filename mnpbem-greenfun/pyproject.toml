@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "mnpbem-greenfun"
-version = "0.1.6"
+version = "0.1.7"
 description = "Green-function utilities and kernels for electrodynamics simulations."
 readme = { file = "README_PYPI.md", content-type = "text/markdown" }
 requires-python = ">=3.10"

@@ -1,8 +1,7 @@
 # mnpbem-mie
 
-[![PyPI version](https://img.shields.io/pypi/v/mnpbem-mie.svg)](https://pypi.org/project/mnpbem-mie/)
-[![Python versions](https://img.shields.io/pypi/pyversions/mnpbem-mie.svg)](https://pypi.org/project/mnpbem-mie/)
 [![Publish mnpbem-mie](https://github.com/galihru/mnpbem/actions/workflows/mnpbemmie.yml/badge.svg)](https://github.com/galihru/mnpbem/actions/workflows/mnpbemmie.yml)
+[![PyPI status](https://img.shields.io/badge/PyPI-pending%20first%20release-orange)](https://github.com/galihru/mnpbem/actions/workflows/mnpbemmie.yml)
 
 `mnpbem-mie` provides Rayleigh-limit scattering formulas for small spherical particles.
 
@@ -34,8 +33,15 @@ $$
 - `numpy>=1.24`
 
 ## Installation
+PyPI publication for `mnpbem-mie` is pending first release.
+
+Track publication status:
+- https://github.com/galihru/mnpbem/actions/workflows/mnpbemmie.yml
+
+Install from repository source:
+
 ```bash
-pip install mnpbem-mie
+pip install git+https://github.com/galihru/mnpbem.git#subdirectory=mnpbem-mie
 ```
 
 ## Example

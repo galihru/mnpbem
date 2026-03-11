@@ -1,8 +1,7 @@
 # mnpbem-mesh2d
 
-[![PyPI version](https://img.shields.io/pypi/v/mnpbem-mesh2d.svg)](https://pypi.org/project/mnpbem-mesh2d/)
-[![Python versions](https://img.shields.io/pypi/pyversions/mnpbem-mesh2d.svg)](https://pypi.org/project/mnpbem-mesh2d/)
 [![Publish mnpbem-mesh2d](https://github.com/galihru/mnpbem/actions/workflows/mnpbemmesh2d.yml/badge.svg)](https://github.com/galihru/mnpbem/actions/workflows/mnpbemmesh2d.yml)
+[![PyPI status](https://img.shields.io/badge/PyPI-pending%20first%20release-orange)](https://github.com/galihru/mnpbem/actions/workflows/mnpbemmesh2d.yml)
 
 `mnpbem-mesh2d` provides triangle geometry operators used in mesh-quality and circumcircle computations.
 
@@ -32,8 +31,15 @@ $$
 - `numpy>=1.24`
 
 ## Installation
+PyPI publication for `mnpbem-mesh2d` is pending first release.
+
+Track publication status:
+- https://github.com/galihru/mnpbem/actions/workflows/mnpbemmesh2d.yml
+
+Install from repository source:
+
 ```bash
-pip install mnpbem-mesh2d
+pip install git+https://github.com/galihru/mnpbem.git#subdirectory=mnpbem-mesh2d
 ```
 
 ## Example

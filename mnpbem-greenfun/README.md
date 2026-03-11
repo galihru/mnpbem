@@ -1,8 +1,7 @@
 # mnpbem-greenfun
 
-[![PyPI version](https://img.shields.io/pypi/v/mnpbem-greenfun.svg)](https://pypi.org/project/mnpbem-greenfun/)
-[![Python versions](https://img.shields.io/pypi/pyversions/mnpbem-greenfun.svg)](https://pypi.org/project/mnpbem-greenfun/)
 [![Publish mnpbem-greenfun](https://github.com/galihru/mnpbem/actions/workflows/mnpbemgreenfun.yml/badge.svg)](https://github.com/galihru/mnpbem/actions/workflows/mnpbemgreenfun.yml)
+[![PyPI status](https://img.shields.io/badge/PyPI-pending%20first%20release-orange)](https://github.com/galihru/mnpbem/actions/workflows/mnpbemgreenfun.yml)
 
 `mnpbem-greenfun` provides baseline free-space Green-function kernels for frequency-domain electrodynamics.
 
@@ -26,8 +25,15 @@ $$
 - `numpy>=1.24`
 
 ## Installation
+PyPI publication for `mnpbem-greenfun` is pending first release.
+
+Track publication status:
+- https://github.com/galihru/mnpbem/actions/workflows/mnpbemgreenfun.yml
+
+Install from repository source:
+
 ```bash
-pip install mnpbem-greenfun
+pip install git+https://github.com/galihru/mnpbem.git#subdirectory=mnpbem-greenfun
 ```
 
 ## Example

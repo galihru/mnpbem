@@ -1,8 +1,7 @@
 # mnpbem
 
-[![PyPI version](https://img.shields.io/pypi/v/mnpbem.svg)](https://pypi.org/project/mnpbem/)
-[![Python versions](https://img.shields.io/pypi/pyversions/mnpbem.svg)](https://pypi.org/project/mnpbem/)
 [![Publish mnpbem](https://github.com/galihru/mnpbem/actions/workflows/mnpbem.yml/badge.svg)](https://github.com/galihru/mnpbem/actions/workflows/mnpbem.yml)
+[![PyPI status](https://img.shields.io/badge/PyPI-pending%20first%20release-orange)](https://github.com/galihru/mnpbem/actions/workflows/mnpbem.yml)
 
 `mnpbem` is the umbrella meta-package for the scientific Python conversion of the MNPBEM ecosystem.
 Installing `mnpbem` installs all submodules required for boundary-element plasmonics workflows.
@@ -17,23 +16,30 @@ $$
 where geometry, material dispersion, kernels, and solvers are decomposed into dedicated submodules.
 
 ## Installation
+PyPI publication for `mnpbem` is pending first release.
+
+Track publication status:
+- https://github.com/galihru/mnpbem/actions/workflows/mnpbem.yml
+
+Install from repository source:
+
 ```bash
-pip install mnpbem
+pip install git+https://github.com/galihru/mnpbem.git#subdirectory=mnpbem
 ```
 
 ## Submodule Map
 | Submodule | Scientific role | PyPI |
 | --- | --- | --- |
 | `mnpbem-base` | Registry and factory for task-dependent solver selection | https://pypi.org/project/mnpbem-base/ |
-| `mnpbem-bem` | Linear response solver kernels | https://pypi.org/project/mnpbem-bem/ |
+| `mnpbem-bem` | Linear response solver kernels | Pending publication: https://github.com/galihru/mnpbem/actions/workflows/mnpbembem.yml |
 | `mnpbem-demo` | Reproducible spectral-grid demos | https://pypi.org/project/mnpbem-demo/ |
 | `mnpbem-demo-mnpbem` | Extended demo orchestration layer | https://pypi.org/project/mnpbem-demo-mnpbem/ |
-| `mnpbem-greenfun` | Green-function kernels for wave propagation | https://pypi.org/project/mnpbem-greenfun/ |
+| `mnpbem-greenfun` | Green-function kernels for wave propagation | Pending publication: https://github.com/galihru/mnpbem/actions/workflows/mnpbemgreenfun.yml |
 | `mnpbem-help` | Documentation and reference module index | https://pypi.org/project/mnpbem-help/ |
 | `mnpbem-material` | Dispersive dielectric models and tabulated optical data | https://pypi.org/project/mnpbem-material/ |
-| `mnpbem-mesh2d` | Triangle geometry operators for 2D meshes | https://pypi.org/project/mnpbem-mesh2d/ |
+| `mnpbem-mesh2d` | Triangle geometry operators for 2D meshes | Pending publication: https://github.com/galihru/mnpbem/actions/workflows/mnpbemmesh2d.yml |
 | `mnpbem-mex` | Optional acceleration backend probing interface | https://pypi.org/project/mnpbem-mex/ |
-| `mnpbem-mie` | Rayleigh/Mie small-particle scattering approximations | https://pypi.org/project/mnpbem-mie/ |
+| `mnpbem-mie` | Rayleigh/Mie small-particle scattering approximations | Pending publication: https://github.com/galihru/mnpbem/actions/workflows/mnpbemmie.yml |
 | `mnpbem-misc` | Core linear algebra and unit conversion utilities | https://pypi.org/project/mnpbem-misc/ |
 | `mnpbem-particles` | Particle geometry primitives | https://pypi.org/project/mnpbem-particles/ |
 | `mnpbem-simulation` | Spectrum orchestration over wavelength grids | https://pypi.org/project/mnpbem-simulation/ |

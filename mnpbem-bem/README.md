@@ -1,8 +1,7 @@
 # mnpbem-bem
 
-[![PyPI version](https://img.shields.io/pypi/v/mnpbem-bem.svg)](https://pypi.org/project/mnpbem-bem/)
-[![Python versions](https://img.shields.io/pypi/pyversions/mnpbem-bem.svg)](https://pypi.org/project/mnpbem-bem/)
 [![Publish mnpbem-bem](https://github.com/galihru/mnpbem/actions/workflows/mnpbembem.yml/badge.svg)](https://github.com/galihru/mnpbem/actions/workflows/mnpbembem.yml)
+[![PyPI status](https://img.shields.io/badge/PyPI-pending%20first%20release-orange)](https://github.com/galihru/mnpbem/actions/workflows/mnpbembem.yml)
 
 `mnpbem-bem` implements a minimal linear-response solve interface for complex frequency-domain systems.
 Release metadata is generated from this README to keep publication notes aligned with the implemented solver model.
@@ -23,8 +22,15 @@ using complex-valued linear algebra (`numpy.linalg.solve`).
 - `numpy>=1.24`
 
 ## Installation
+PyPI publication for `mnpbem-bem` is pending first release.
+
+Track publication status:
+- https://github.com/galihru/mnpbem/actions/workflows/mnpbembem.yml
+
+Install from repository source:
+
 ```bash
-pip install mnpbem-bem
+pip install git+https://github.com/galihru/mnpbem.git#subdirectory=mnpbem-bem
 ```
 
 ## Example

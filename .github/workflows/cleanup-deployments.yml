@@ -73,7 +73,7 @@ jobs:
               return;
             }
 
-            let keptSuccessful = false;
+            const deploymentStates = [];
             for (const dep of deployments) {
               const statuses = await github.rest.repos.listDeploymentStatuses({
                 owner,
@@ -83,12 +83,16 @@ jobs:
               });
               const latestState =
                 statuses.data.length > 0 ? statuses.data[0].state : "unknown";
+              deploymentStates.push({ dep, latestState });
+            }
 
-              const isSuccess = latestState === "success";
-              const shouldKeep = isSuccess && !keptSuccessful;
+            const newestSuccessful = deploymentStates.find((item) => item.latestState === "success");
+            const keepDeploymentId = newestSuccessful
+              ? newestSuccessful.dep.id
+              : deploymentStates[0].dep.id;
 
-              if (shouldKeep) {
-                keptSuccessful = true;
+            for (const { dep, latestState } of deploymentStates) {
+              if (dep.id === keepDeploymentId) {
                 core.info(`[${environment}] Keeping deployment ${dep.id} (state=${latestState}).`);
                 continue;
               }

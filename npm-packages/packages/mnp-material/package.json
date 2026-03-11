@@ -1,7 +1,7 @@
 {
   "name": "@galihru/mnp-material",
-  "version": "0.1.0",
-  "description": "Material dielectric models for plasmonic electrodynamics.",
+  "version": "0.1.3",
+  "description": "Analytical dielectric-function models for metallic nanoparticles in plasmonic nanophotonics.",
   "type": "module",
   "main": "./src/index.js",
   "exports": {
@@ -11,9 +11,26 @@
     "src",
     "README.md"
   ],
+  "keywords": [
+    "plasmonics",
+    "dielectric-function",
+    "drude-model",
+    "nanoparticle",
+    "nanophotonics",
+    "permittivity",
+    "gold",
+    "silver",
+    "electrodynamics",
+    "optics"
+  ],
   "author": "GALIH RIDHO UTOMO <g4lihru@students.unnes.ac.id>",
   "license": "GPL-2.0-only",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/galihru/mnpbem.git"
+  },
   "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
     "access": "public"
   },
   "scripts": {

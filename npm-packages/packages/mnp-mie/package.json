@@ -1,7 +1,7 @@
 {
   "name": "@galihru/mnp-mie",
-  "version": "0.1.0",
-  "description": "Rayleigh-limit scattering formulations for spherical particles.",
+  "version": "0.1.3",
+  "description": "Rayleigh quasi-static scattering: polarizability and electromagnetic cross sections for spherical nanoparticles.",
   "type": "module",
   "main": "./src/index.js",
   "exports": {
@@ -11,9 +11,26 @@
     "src",
     "README.md"
   ],
+  "keywords": [
+    "mie-scattering",
+    "rayleigh",
+    "nanoparticle",
+    "cross-section",
+    "extinction",
+    "polarizability",
+    "plasmonics",
+    "nanophotonics",
+    "scattering",
+    "absorption"
+  ],
   "author": "GALIH RIDHO UTOMO <g4lihru@students.unnes.ac.id>",
   "license": "GPL-2.0-only",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/galihru/mnpbem.git"
+  },
   "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
     "access": "public"
   },
   "scripts": {

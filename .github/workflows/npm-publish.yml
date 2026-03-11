@@ -1,0 +1,115 @@
+name: Publish npm packages
+
+on:
+  workflow_dispatch:
+    inputs:
+      bump:
+        description: "Version increment type"
+        required: true
+        default: patch
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+  push:
+    branches:
+      - main
+    paths:
+      - "npm-packages/**"
+
+permissions:
+  contents: write
+  packages: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      # ── 1. Publish to npmjs.com ──────────────────────────────────────────────
+      - name: Configure npmjs.com registry
+        run: |
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > \
+            npm-packages/.npmrc
+
+      - name: Set publishConfig → npmjs.com
+        working-directory: npm-packages
+        run: |
+          for pkg in packages/mnp-material packages/mnp-mie packages/mnp; do
+            node -e "
+              const fs = require('fs');
+              const p = '$pkg/package.json';
+              const j = JSON.parse(fs.readFileSync(p));
+              j.publishConfig = { registry: 'https://registry.npmjs.org/', access: 'public' };
+              fs.writeFileSync(p, JSON.stringify(j, null, 2) + '\n');
+            "
+          done
+
+      - name: Publish mnp-material → npmjs.com
+        working-directory: npm-packages/packages/mnp-material
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish mnp-mie → npmjs.com
+        working-directory: npm-packages/packages/mnp-mie
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish mnp → npmjs.com
+        working-directory: npm-packages/packages/mnp
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      # ── 2. Publish to GitHub Package Registry ───────────────────────────────
+      - name: Configure GitHub Package Registry
+        run: |
+          echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" > \
+            npm-packages/.npmrc
+
+      - name: Set publishConfig → GitHub Packages
+        working-directory: npm-packages
+        run: |
+          for pkg in packages/mnp-material packages/mnp-mie packages/mnp; do
+            node -e "
+              const fs = require('fs');
+              const p = '$pkg/package.json';
+              const j = JSON.parse(fs.readFileSync(p));
+              j.publishConfig = { registry: 'https://npm.pkg.github.com/', access: 'public' };
+              fs.writeFileSync(p, JSON.stringify(j, null, 2) + '\n');
+            "
+          done
+
+      - name: Publish mnp-material → GitHub Packages
+        working-directory: npm-packages/packages/mnp-material
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish mnp-mie → GitHub Packages
+        working-directory: npm-packages/packages/mnp-mie
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish mnp → GitHub Packages
+        working-directory: npm-packages/packages/mnp
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # ── 3. Clean up .npmrc ───────────────────────────────────────────────────
+      - name: Remove .npmrc token
+        if: always()
+        run: |
+          echo "# registry placeholders" > npm-packages/.npmrc

@@ -5,6 +5,7 @@
 [![Publish mnpbem-bem](https://github.com/galihru/mnpbem/actions/workflows/mnpbembem.yml/badge.svg)](https://github.com/galihru/mnpbem/actions/workflows/mnpbembem.yml)
 
 `mnpbem-bem` implements a minimal linear-response solve interface for complex frequency-domain systems.
+Release metadata is generated from this README to keep publication notes aligned with the implemented solver model.
 
 ## Implemented Formulation
 The solver computes:

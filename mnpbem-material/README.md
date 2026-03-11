@@ -1,57 +1,137 @@
 # mnpbem-material
 
-`mnpbem-material` mengimplementasikan model fungsi dielektrik utama pada domain plasmonik.
+`mnpbem-material` implements dielectric function models commonly used in plasmonic simulations.
+The module provides simple analytical models and tabulated optical data for metallic materials such as Au, Ag, and Al.
 
-## Formulasi yang Diimplementasikan
-1. **Konstanta dielektrik**
+---
 
-\[
-\varepsilon(\lambda)=\varepsilon_0,\qquad
-k(\lambda)=\frac{2\pi}{\lambda}\sqrt{\varepsilon}
-\]
+# Implemented Formulations
 
-2. **Model Drude**
+## 1. Constant Dielectric Function
 
-\[
-\varepsilon(\omega)=\varepsilon_\infty-\frac{\omega_p^2}{\omega(\omega+i\gamma)}
-\]
+The simplest dielectric model assumes a wavelength-independent dielectric constant.
 
-dengan transformasi energi-panjang gelombang:
+$$
+[
+\varepsilon(\lambda) = \varepsilon_0
+]
+$$
 
-\[
-\omega_{\mathrm{eV}} = \frac{\mathrm{EV\_TO\_NM}}{\lambda_{\mathrm{nm}}}
-\]
+The corresponding wave number is
 
-Parameter `Au`, `Ag`, `Al` mengikuti formulasi pada file MATLAB `Material/@epsdrude/init.m`.
+$$
+[
+k(\lambda) = \frac{2\pi}{\lambda}\sqrt{\varepsilon}
+]
+$$
 
-3. **Model tabulasi**
+where
 
-Dari data `(E, n, k)`, didapat:
+$$v* ( \varepsilon_0 )$$ : constant dielectric permittivity
+$$v* ( \lambda )$$ : wavelength
 
-\[
+---
+
+## 2. Drude Model
+
+The Drude model describes the optical response of free-electron metals.
+
+$$
+[
+\varepsilon(\omega) =
+\varepsilon_\infty -
+\frac{\omega_p^2}{\omega(\omega + i\gamma)}
+]
+$$
+
+where
+
+$$* ( \varepsilon_\infty )$$ : high-frequency dielectric constant
+$$* ( \omega_p )$$ : plasma frequency
+$$* ( \gamma )$$ : damping constant
+$$* ( \omega )$$ : angular frequency
+
+### Energy–Wavelength Conversion
+
+The following relation is used to convert wavelength to photon energy:
+
+$$
+[
+\omega_{eV} =
+\frac{EV_TO_NM}{\lambda_{nm}}
+]
+$$
+
+Material parameters for **Au**, **Ag**, and **Al** follow the formulation used in the MATLAB implementation:
+
+```
+Material/@epsdrude/init.m
+```
+
+from the original **MNPBEM toolbox**.
+
+---
+
+## 3. Tabulated Material Model
+
+For tabulated optical data ( (E, n, k) ), the dielectric function is computed as
+
+$$
+[
 \varepsilon = (n + i k)^2
-\]
+]
+$$
 
-Interpolasi dilakukan pada domain panjang gelombang hasil konversi dari energi.
+where
 
-Implementasi:
-- `src/mnpbem_material/models.py`
-- data material: `src/mnpbem_material/data/*.dat`
+$$* ( n )$$ : refractive index
+$$* ( k )v$$ : extinction coefficient
 
-## Dependensi
-Dependensi runtime dipasang otomatis saat instalasi paket:
-- `numpy>=1.24`
+Interpolation is performed in the wavelength domain after converting tabulated energy values.
 
-## Contoh Penggunaan
-Contoh siap jalan tersedia di:
-- `examples/basic_usage.py`
+---
 
-Jalankan:
+# Implementation
+
+Core implementation:
+
+```
+src/mnpbem_material/models.py
+```
+
+Material datasets:
+
+```
+src/mnpbem_material/data/*.dat
+```
+
+---
+
+# Dependencies
+
+Runtime dependencies are installed automatically when the package is installed.
+
+* numpy ≥ 1.24
+
+---
+
+# Example Usage
+
+A runnable example is provided in:
+
+```
+examples/basic_usage.py
+```
+
+Run the example with:
 
 ```bash
 python examples/basic_usage.py
 ```
 
-## Author
-- GALIH RIDHO UTOMO
-- g4lihru@students.unnes.ac.id
+---
+
+# Author
+
+GALIH RIDHO UTOMO
+[g4lihru@students.unnes.ac.id](mailto:g4lihru@students.unnes.ac.id)

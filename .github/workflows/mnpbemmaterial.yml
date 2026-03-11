@@ -1,0 +1,130 @@
+name: Release to PyPI & GitHub
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+  deployments: write
+  id-token: write
+
+jobs:
+  build_publish_and_release:
+    runs-on: ubuntu-latest
+    environment: pypi
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Locate package directory
+        id: locate
+        shell: bash
+        run: |
+          set -euo pipefail
+          for candidate in \
+            "mnpbem-material" \
+            "packages/mnpbem-material" \
+            "BEM/python_packages/packages/mnpbem-material"; do
+            if [ -f "$candidate/pyproject.toml" ]; then
+              echo "PACKAGE_DIR=$candidate" >> "$GITHUB_OUTPUT"
+              echo "PYPROJECT_FILE=$candidate/pyproject.toml" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+          done
+          echo "Unable to find mnpbem-material/pyproject.toml" >&2
+          exit 1
+
+      - name: Read package metadata
+        id: metadata
+        shell: bash
+        env:
+          PYPROJECT_FILE: ${{ steps.locate.outputs.PYPROJECT_FILE }}
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import os
+          import tomllib
+          from pathlib import Path
+
+          path = Path(os.environ["PYPROJECT_FILE"])
+          data = tomllib.loads(path.read_text(encoding="utf-8"))
+          project = data["project"]
+          name = project["name"]
+          version = project["version"]
+
+          out = Path(os.environ["GITHUB_OUTPUT"])
+          with out.open("a", encoding="utf-8") as fh:
+            fh.write(f"PACKAGE_NAME={name}\n")
+            fh.write(f"VERSION={version}\n")
+          PY
+
+      - name: Start PyPI Deployment
+        id: create-deployment
+        uses: actions/github-script@v7
+        with:
+          result-encoding: string
+          script: |
+            const deployment = await github.rest.repos.createDeployment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: context.ref,
+              environment: 'pypi',
+              auto_merge: false,
+              required_contexts: [],
+              transient_environment: true,
+            });
+            return deployment.data.id;
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install build & twine
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install build twine
+
+      - name: Build sdist & wheel
+        run: python -m build --sdist --wheel --outdir dist "${{ steps.locate.outputs.PACKAGE_DIR }}"
+
+      - name: Verify package metadata
+        run: python -m twine check dist/*
+
+      - name: Publish to PyPI
+        env:
+          TWINE_USERNAME: __token__
+          TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
+        run: |
+          python -m twine upload --skip-existing dist/*
+
+      - name: Update Deployment Status
+        if: success()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.repos.createDeploymentStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              deployment_id: Number('${{ steps.create-deployment.outputs.result }}'),
+              state: 'success',
+              environment_url: 'https://pypi.org/project/${{ steps.metadata.outputs.PACKAGE_NAME }}/'
+            });
+
+      - name: Mark deployment as failed
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.repos.createDeploymentStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              deployment_id: Number('${{ steps.create-deployment.outputs.result }}'),
+              state: 'failure'
+            });

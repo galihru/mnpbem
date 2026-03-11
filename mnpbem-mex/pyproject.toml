@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "mnpbem-mex"
-version = "0.1.1"
+version = "0.1.3"
 description = "Acceleration-facing interfaces corresponding to MNPBEM mex integrations."
 readme = "README.md"
 requires-python = ">=3.10"

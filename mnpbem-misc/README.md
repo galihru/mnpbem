@@ -2,7 +2,6 @@
 
 [![PyPI version](https://img.shields.io/pypi/v/mnpbem-misc.svg)](https://pypi.org/project/mnpbem-misc/)
 [![Python versions](https://img.shields.io/pypi/pyversions/mnpbem-misc.svg)](https://pypi.org/project/mnpbem-misc/)
-[![Publish mnpbem-misc](https://github.com/galihru/mnpbem/actions/workflows/mnpbemmisc.yml/badge.svg)](https://github.com/galihru/mnpbem/actions/workflows/mnpbemmisc.yml)
 
 `mnpbem-misc` provides shared numerical utilities used across MNPBEM-Python submodules.
 
@@ -14,22 +13,22 @@
 ## Mathematical Formulations
 Photon energy-wavelength conversion:
 
-$$
+```text
 \lambda_{\mathrm{nm}} = \frac{C_{\mathrm{eV\cdot nm}}}{E_{\mathrm{eV}}},
 \qquad C_{\mathrm{eV\cdot nm}} \approx 1239.841984
-$$
+```
 
 Euclidean vector norm:
 
-$$
+```text
 \|\mathbf{v}\|_2 = \sqrt{\sum_i |v_i|^2}
-$$
+```
 
 Normalization:
 
-$$
+```text
 \tilde{\mathbf{v}} = \frac{\mathbf{v}}{\|\mathbf{v}_{\mathrm{ref}}\|_2}
-$$
+```
 
 ## Implementation
 - Unit conversion utilities: `src/mnpbem_misc/units.py`

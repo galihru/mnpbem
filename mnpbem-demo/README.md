@@ -2,16 +2,15 @@
 
 [![PyPI version](https://img.shields.io/pypi/v/mnpbem-demo.svg)](https://pypi.org/project/mnpbem-demo/)
 [![Python versions](https://img.shields.io/pypi/pyversions/mnpbem-demo.svg)](https://pypi.org/project/mnpbem-demo/)
-[![Publish mnpbem-demo](https://github.com/galihru/mnpbem/actions/workflows/mnpbemdemo.yml/badge.svg)](https://github.com/galihru/mnpbem/actions/workflows/mnpbemdemo.yml)
 
 `mnpbem-demo` provides reproducible spectral grids for controlled numerical experiments.
 
 ## Implemented Formulation
 For start wavelength `lambda_start`, stop wavelength `lambda_stop`, and sample count `N`:
 
-$$
+```text
 \lambda_i = \lambda_0 + i\,\Delta\lambda,\qquad \Delta\lambda=\frac{\lambda_1-\lambda_0}{N-1}
-$$
+```
 
 ## Implementation
 - Demo grid generator: `src/mnpbem_demo/cases.py`

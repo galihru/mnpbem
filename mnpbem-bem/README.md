@@ -2,7 +2,6 @@
 
 [![PyPI version](https://img.shields.io/pypi/v/mnpbem-bem.svg)](https://pypi.org/project/mnpbem-bem/)
 [![Python versions](https://img.shields.io/pypi/pyversions/mnpbem-bem.svg)](https://pypi.org/project/mnpbem-bem/)
-[![Publish mnpbem-bem](https://github.com/galihru/mnpbem/actions/workflows/mnpbembem.yml/badge.svg)](https://github.com/galihru/mnpbem/actions/workflows/mnpbembem.yml)
 
 `mnpbem-bem` implements a minimal linear-response solve interface for complex frequency-domain systems.
 Release metadata is generated from this README to keep publication notes aligned with the implemented solver model.
@@ -10,9 +9,9 @@ Release metadata is generated from this README to keep publication notes aligned
 ## Implemented Formulation
 The solver computes:
 
-$$
+```text
 \mathbf{A}\mathbf{x}=\mathbf{b}
-$$
+```
 
 using complex-valued linear algebra (`numpy.linalg.solve`).
 

@@ -2,7 +2,6 @@
 
 [![PyPI version](https://img.shields.io/pypi/v/mnpbem.svg)](https://pypi.org/project/mnpbem/)
 [![Python versions](https://img.shields.io/pypi/pyversions/mnpbem.svg)](https://pypi.org/project/mnpbem/)
-[![Publish mnpbem](https://github.com/galihru/mnpbem/actions/workflows/mnpbem.yml/badge.svg)](https://github.com/galihru/mnpbem/actions/workflows/mnpbem.yml)
 
 `mnpbem` is the umbrella meta-package for the scientific Python conversion of the MNPBEM ecosystem.
 Installing `mnpbem` installs all submodules required for boundary-element plasmonics workflows.
@@ -10,9 +9,9 @@ Installing `mnpbem` installs all submodules required for boundary-element plasmo
 ## Scientific Overview
 The package family targets frequency-domain formulations of nanoplasmonic problems, typically represented as:
 
-$$
+```text
 \mathbf{A}(\lambda)\,\mathbf{x}(\lambda)=\mathbf{b}(\lambda)
-$$
+```
 
 where geometry, material dispersion, kernels, and solvers are decomposed into dedicated submodules.
 

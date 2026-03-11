@@ -2,7 +2,6 @@
 
 [![PyPI version](https://img.shields.io/pypi/v/mnpbem-mex.svg)](https://pypi.org/project/mnpbem-mex/)
 [![Python versions](https://img.shields.io/pypi/pyversions/mnpbem-mex.svg)](https://pypi.org/project/mnpbem-mex/)
-[![Publish mnpbem-mex](https://github.com/galihru/mnpbem/actions/workflows/mnpbemmex.yml/badge.svg)](https://github.com/galihru/mnpbem/actions/workflows/mnpbemmex.yml)
 
 `mnpbem-mex` provides acceleration-backend discovery hooks for optional compiled modules.
 Release metadata is generated from this README to keep technical notes synchronized with package artifacts.
@@ -10,9 +9,9 @@ Release metadata is generated from this README to keep technical notes synchroni
 ## Scientific Context
 Acceleration backends are used to reduce numerical runtime. A common indicator is speedup:
 
-$$
+```text
 S = \frac{T_{\mathrm{python}}}{T_{\mathrm{accelerated}}}
-$$
+```
 
 This package provides capability detection needed before using accelerated kernels.
 

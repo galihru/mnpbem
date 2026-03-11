@@ -2,7 +2,6 @@
 
 [![PyPI version](https://img.shields.io/pypi/v/mnpbem-particles.svg)](https://pypi.org/project/mnpbem-particles/)
 [![Python versions](https://img.shields.io/pypi/pyversions/mnpbem-particles.svg)](https://pypi.org/project/mnpbem-particles/)
-[![Publish mnpbem-particles](https://github.com/galihru/mnpbem/actions/workflows/mnpbemparticles.yml/badge.svg)](https://github.com/galihru/mnpbem/actions/workflows/mnpbemparticles.yml)
 
 `mnpbem-particles` provides geometric particle primitives for nanostructure models.
 Release metadata is generated from this README so published notes remain consistent with the scientific API summary.
@@ -10,9 +9,9 @@ Release metadata is generated from this README so published notes remain consist
 ## Implemented Formulation
 Sphere volume:
 
-$$
+```text
 V = \frac{4}{3}\pi r^3
-$$
+```
 
 ## Implementation
 - Particle primitives: `src/mnpbem_particles/primitives.py`

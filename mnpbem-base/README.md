@@ -2,7 +2,6 @@
 
 [![PyPI version](https://img.shields.io/pypi/v/mnpbem-base.svg)](https://pypi.org/project/mnpbem-base/)
 [![Python versions](https://img.shields.io/pypi/pyversions/mnpbem-base.svg)](https://pypi.org/project/mnpbem-base/)
-[![Publish mnpbem-base](https://github.com/galihru/mnpbem/actions/workflows/mnpbembase.yml/badge.svg)](https://github.com/galihru/mnpbem/actions/workflows/mnpbembase.yml)
 
 `mnpbem-base` provides registry and factory primitives for selecting solver classes from option constraints.
 The release notes are generated directly from this scientific README for traceable package documentation.
@@ -10,9 +9,9 @@ The release notes are generated directly from this scientific README for traceab
 ## Implemented Formulation
 Given a requirement set for a candidate class, the selection score is:
 
-$$
+```text
 \hat{c}=\arg\max_c\sum_j\mathbf{1}[\text{need}_{c,j}\ \text{is satisfied}]
-$$
+```
 
 This mirrors rule-based class dispatch used in MNPBEM-style solver construction.
 

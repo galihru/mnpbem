@@ -6,9 +6,9 @@ Release metadata is generated from this README to keep technical notes synchroni
 ## Scientific Context
 Acceleration backends are used to reduce numerical runtime. A common indicator is speedup:
 
-```text
+$$
 S = \frac{T_{\mathrm{python}}}{T_{\mathrm{accelerated}}}
-```
+$$
 
 This package provides capability detection needed before using accelerated kernels.
 

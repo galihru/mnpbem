@@ -5,9 +5,9 @@
 ## Scientific Context
 It formalizes an index set of core computational blocks:
 
-```text
+$$
 \mathcal{M}=\{\text{base},\text{material},\text{mesh2d},\text{mie},\text{greenfun},\text{particles},\text{simulation}\}
-```
+$$
 
 ## Implementation
 - Reference list: `src/mnpbem_help/reference.py`

@@ -14,38 +14,38 @@ The module provides analytical material models and tabulated optical constants f
 ### 1. Constant Dielectric Function
 For wavelength-independent permittivity:
 
-```text
+$$
 \varepsilon(\lambda) = \varepsilon_0
-```
+$$
 
 The wave number is:
 
-```text
+$$
 k(\lambda) = \frac{2\pi}{\lambda}\sqrt{\varepsilon}
-```
+$$
 
 ### 2. Drude Model
 For free-electron metal response:
 
-```text
+$$
 \varepsilon(\omega) =
 \varepsilon_\infty -
 \frac{\omega_p^2}{\omega(\omega + i\gamma)}
-```
+$$
 
 Energy-wavelength conversion used in the implementation:
 
-```text
+$$
 \omega_{\mathrm{eV}} = \frac{C_{\mathrm{eV\cdot nm}}}{\lambda_{\mathrm{nm}}},
 \qquad C_{\mathrm{eV\cdot nm}} \approx 1239.841984
-```
+$$
 
 ### 3. Tabulated Material Model
 Given tabulated optical constants (energy, refractive index, extinction), the dielectric function is:
 
-```text
+$$
 \varepsilon = (n + i k)^2
-```
+$$
 
 ## Implementation
 - Core implementation: `src/mnpbem_material/models.py`

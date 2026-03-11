@@ -6,9 +6,9 @@ The release notes are generated directly from this scientific README for traceab
 ## Implemented Formulation
 Given a requirement set for a candidate class, the selection score is:
 
-```text
+$$
 \hat{c}=\arg\max_c\sum_j\mathbf{1}[\text{need}_{c,j}\ \text{is satisfied}]
-```
+$$
 
 This mirrors rule-based class dispatch used in MNPBEM-style solver construction.
 

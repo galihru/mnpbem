@@ -5,21 +5,22 @@
 ## Implemented Formulations
 Signed doubled triangle area:
 
-```text
-A2 = d12_x * d13_y - d12_y * d13_x
-```
+$$
+A_2=(d_{12})_x(d_{13})_y-(d_{12})_y(d_{13})_x
+$$
 
 Circumcircle radius squared:
 
-```text
-R2 = ||p1 - c||^2
-```
+$$
+R^2=\|p_1-c\|^2
+$$
 
 Mesh quality indicator:
 
-```text
-q = (2 * sqrt(3) * |A2|) / (||d12||^2 + ||d13||^2 + ||d23||^2), 0 <= q <= 1
-```
+$$
+q=\frac{2\sqrt{3}|A_2|}{\|d_{12}\|^2+\|d_{13}\|^2+\|d_{23}\|^2},
+\quad 0 \le q \le 1
+$$
 
 ## Implementation
 - Geometry operators: `src/mnpbem_mesh2d/geometry.py`

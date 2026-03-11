@@ -5,23 +5,23 @@
 ## Implemented Formulations
 Polarizability:
 
-```text
+$$
 \alpha = 4\pi a^3\frac{\varepsilon_p-\varepsilon_m}{\varepsilon_p+2\varepsilon_m}
-```
+$$
 
 Wave number in medium:
 
-```text
+$$
 k = \frac{2\pi}{\lambda}\sqrt{\varepsilon_m}
-```
+$$
 
 Cross sections:
 
-```text
+$$
 C_{\mathrm{ext}} = k\,\mathrm{Im}(\alpha),\quad
 C_{\mathrm{sca}} = \frac{|k|^4}{6\pi}|\alpha|^2,\quad
 C_{\mathrm{abs}} = C_{\mathrm{ext}}-C_{\mathrm{sca}}
-```
+$$
 
 ## Implementation
 - Rayleigh model: `src/mnpbem_mie/rayleigh.py`

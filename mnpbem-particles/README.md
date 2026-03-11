@@ -6,9 +6,9 @@ Release metadata is generated from this README so published notes remain consist
 ## Implemented Formulation
 Sphere volume:
 
-```text
+$$
 V = \frac{4}{3}\pi r^3
-```
+$$
 
 ## Implementation
 - Particle primitives: `src/mnpbem_particles/primitives.py`

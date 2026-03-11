@@ -6,9 +6,9 @@ Release metadata is generated from this README to keep publication notes aligned
 ## Implemented Formulation
 The solver computes:
 
-```text
+$$
 \mathbf{A}\mathbf{x}=\mathbf{b}
-```
+$$
 
 using complex-valued linear algebra (`numpy.linalg.solve`).
 

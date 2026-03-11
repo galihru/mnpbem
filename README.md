@@ -11,15 +11,15 @@ The architecture separates material models, geometry, kernels, and solvers into 
 
 The package family targets frequency-domain boundary-element formulations, commonly represented as:
 
-```text
-A(lambda) x(lambda) = b(lambda)
-```
+$$
+A(\lambda)\,x(\lambda)=b(\lambda)
+$$
 
 For dispersive media, the optical response is modeled through a complex dielectric function:
 
-```text
-epsilon(omega) = epsilon_inf - omega_p^2 / (omega (omega + i gamma))
-```
+$$
+\varepsilon(\omega)=\varepsilon_\infty-\frac{\omega_p^2}{\omega(\omega+i\gamma)}
+$$
 
 This decomposition supports reproducible simulation chains where each module contributes a clearly defined mathematical operator.
 

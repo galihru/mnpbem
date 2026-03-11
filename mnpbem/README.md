@@ -11,9 +11,9 @@ Installing this package pulls the complete set of scientific submodules required
 
 The full pipeline is organized around coupled operators in the frequency domain:
 
-```text
-A(lambda) x(lambda) = b(lambda)
-```
+$$
+A(\lambda)\,x(\lambda)=b(\lambda)
+$$
 
 where `A` combines geometric operators, Green-function kernels, and material-dispersion operators defined by the submodule ecosystem.
 

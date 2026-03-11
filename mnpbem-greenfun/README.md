@@ -5,15 +5,15 @@
 ## Implemented Formulations
 Scalar Green function:
 
-```text
+$$
 G(r,k)=\frac{e^{ikr}}{4\pi r}
-```
+$$
 
 Dyadic-related prefactor:
 
-```text
+$$
 k^2 G(r,k)
-```
+$$
 
 ## Implementation
 - Kernel functions: `src/mnpbem_greenfun/kernels.py`

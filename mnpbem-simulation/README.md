@@ -6,9 +6,9 @@ Release metadata is generated from this README so installation notes and mathema
 ## Implemented Formulation
 For a sampled wavelength grid, the response is evaluated as:
 
-```text
+$$
 S_i = f(\lambda_i)
-```
+$$
 
 with strict shape-consistency between input grid and output spectrum.
 

@@ -10,22 +10,22 @@
 ## Mathematical Formulations
 Photon energy-wavelength conversion:
 
-```text
-lambda_nm = C_ev_nm / E_ev
-C_ev_nm = 1239.841984
-```
+$$
+\lambda_{\mathrm{nm}}=\frac{C_{\mathrm{eV\cdot nm}}}{E_{\mathrm{eV}}},
+\quad C_{\mathrm{eV\cdot nm}}=1239.841984
+$$
 
 Euclidean vector norm:
 
-```text
-||v||_2 = sqrt(sum_i |v_i|^2)
-```
+$$
+\|v\|_2=\sqrt{\sum_i |v_i|^2}
+$$
 
 Normalization:
 
-```text
-v_tilde = v / ||v_ref||_2
-```
+$$
+\tilde{v}=\frac{v}{\|v_{\mathrm{ref}}\|_2}
+$$
 
 ## Implementation
 - Unit conversion utilities: `src/mnpbem_misc/units.py`

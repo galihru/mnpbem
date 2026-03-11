@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "mnpbem-mesh2d"
-version = "0.1.8"
+version = "0.1.9"
 description = "2D mesh geometry primitives for computational plasmonics meshes."
 readme = { file = "README_PYPI.md", content-type = "text/markdown" }
 requires-python = ">=3.10"

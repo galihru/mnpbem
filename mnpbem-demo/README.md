@@ -7,7 +7,7 @@
 `mnpbem-demo` provides reproducible spectral grids for controlled numerical experiments.
 
 ## Implemented Formulation
-For start wavelength $\lambda_0$, stop wavelength $\lambda_1$, and sample count $N$:
+For start wavelength `lambda_start`, stop wavelength `lambda_stop`, and sample count `N`:
 
 $$
 \lambda_i = \lambda_0 + i\,\Delta\lambda,\qquad \Delta\lambda=\frac{\lambda_1-\lambda_0}{N-1}

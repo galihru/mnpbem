@@ -146,12 +146,12 @@ jobs:
           VERSION: ${{ steps.metadata.outputs.VERSION }}
         run: |
           set -euo pipefail
-          for attempt in $(seq 1 18); do
+          for attempt in $(seq 1 30); do
             if curl -fsSL "https://pypi.org/pypi/${PACKAGE_NAME}/${VERSION}/json" > /dev/null; then
               echo "PyPI package ${PACKAGE_NAME}==${VERSION} is available."
               exit 0
             fi
-            echo "Waiting for PyPI propagation (attempt ${attempt}/18)..."
+            echo "Waiting for PyPI propagation (attempt ${attempt}/30)..."
             sleep 10
           done
           echo "Timed out while waiting for ${PACKAGE_NAME}==${VERSION} on PyPI." >&2

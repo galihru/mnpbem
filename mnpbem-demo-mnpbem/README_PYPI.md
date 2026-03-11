@@ -5,10 +5,7 @@
 ## Scientific Context
 The module acts as a deterministic controller for reproducible simulation sequences:
 
-`D = {(lambda_i, configuration_i) | i = 1, 2, ..., N}`
-
-In equivalent Unicode notation:
-`D = {(λ_i, configuration_i) | i = 1, 2, ..., N}`
+![Equation](https://latex.codecogs.com/svg.image?%5Cdpi%7B150%7D%20D%20%3D%20%5Cleft%5C%7B%28%5Clambda_i%2C%20%5Cmathrm%7Bconfiguration%7D_i%29%20%5Cmid%20i%20%3D%201%2C2%2C%5Cldots%2CN%5Cright%5C%7D)
 
 ## Implementation
 - Demo pipeline summary: `src/mnpbem_demo_mnpbem/runner.py`

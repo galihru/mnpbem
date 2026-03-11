@@ -32,7 +32,7 @@ jobs:
   build_publish_and_release:
     if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
-    environment: pypi
+    environment: mnpbem-material
 
     steps:
       - name: Check out code
@@ -130,7 +130,7 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               ref: context.ref,
-              environment: 'pypi',
+              environment: 'mnpbem-material',
               auto_merge: false,
               required_contexts: [],
               transient_environment: true,
@@ -183,23 +183,53 @@ jobs:
           git push origin "$TAG_NAME"
 
       - name: Create GitHub Release
+        shell: bash
+        env:
+          PACKAGE_DIR: ${{ steps.locate.outputs.PACKAGE_DIR }}
+          PACKAGE_NAME: ${{ steps.metadata.outputs.PACKAGE_NAME }}
+          VERSION: ${{ steps.metadata.outputs.VERSION }}
+          BUMP_KIND: ${{ steps.metadata.outputs.BUMP_KIND }}
+        run: |
+          set -euo pipefail
+          readme_path="$PACKAGE_DIR/README.md"
+          related_deps="$(cat <<'EOF'
+          ${{ steps.metadata.outputs.RELATED_DEPS }}
+          EOF
+          )"
+          has_related="$(echo "$related_deps" | tr -d '[:space:]')"
+
+          {
+            echo "# ${PACKAGE_NAME} v${VERSION}"
+            echo
+            echo "## Installation"
+            echo '```bash'
+            echo "pip install ${PACKAGE_NAME}==${VERSION}"
+            echo '```'
+            echo
+            echo "- PyPI: https://pypi.org/project/${PACKAGE_NAME}/${VERSION}/"
+            echo "- Bump type: \`${BUMP_KIND}\`"
+            echo
+            echo "## Related mnpbem Dependencies"
+            if [ -n "$has_related" ]; then
+              echo '```text'
+              printf "%s\n" "$related_deps"
+              echo '```'
+            else
+              echo "None"
+            fi
+            echo
+            echo "---"
+            echo
+            cat "$readme_path"
+          } > RELEASE_BODY.md
+
+      - name: Publish GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.metadata.outputs.TAG_NAME }}
           name: ${{ steps.metadata.outputs.PACKAGE_NAME }} v${{ steps.metadata.outputs.VERSION }}
           files: dist/*
-          body: |
-            Automated release for `${{ steps.metadata.outputs.PACKAGE_NAME }}`.
-
-            - Version: `${{ steps.metadata.outputs.VERSION }}`
-            - Bump type: `${{ steps.metadata.outputs.BUMP_KIND }}`
-            - PyPI: https://pypi.org/project/${{ steps.metadata.outputs.PACKAGE_NAME }}/${{ steps.metadata.outputs.VERSION }}/
-            - Install: `pip install ${{ steps.metadata.outputs.PACKAGE_NAME }}==${{ steps.metadata.outputs.VERSION }}`
-
-            Related mnpbem module dependencies:
-            ```
-            ${{ steps.metadata.outputs.RELATED_DEPS || 'None' }}
-            ```
+          body_path: RELEASE_BODY.md
 
       - name: Update Deployment Status
         if: success()

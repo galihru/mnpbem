@@ -24,9 +24,9 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/galihru"
-Repository = "https://github.com/galihru"
-PyPI = "https://pypi.org/user/galihridhoutomo/"
+Homepage = "https://pypi.org/project/mnpbem-material/"
+Repository = "https://github.com/galihru/mnpbem/tree/main/mnpbem-material"
+Source = "https://github.com/galihru/mnpbem"
 
 [tool.setuptools]
 package-dir = {"" = "src"}

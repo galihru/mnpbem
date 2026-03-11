@@ -11,20 +11,20 @@
 Photon energy-wavelength conversion:
 
 ```text
-\lambda_{\mathrm{nm}} = \frac{C_{\mathrm{eV\cdot nm}}}{E_{\mathrm{eV}}},
-\qquad C_{\mathrm{eV\cdot nm}} \approx 1239.841984
+lambda_nm = C_ev_nm / E_ev
+C_ev_nm = 1239.841984
 ```
 
 Euclidean vector norm:
 
 ```text
-\|\mathbf{v}\|_2 = \sqrt{\sum_i |v_i|^2}
+||v||_2 = sqrt(sum_i |v_i|^2)
 ```
 
 Normalization:
 
 ```text
-\tilde{\mathbf{v}} = \frac{\mathbf{v}}{\|\mathbf{v}_{\mathrm{ref}}\|_2}
+v_tilde = v / ||v_ref||_2
 ```
 
 ## Implementation

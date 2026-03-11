@@ -1,7 +1,7 @@
 ﻿# mnpbem
 
 `mnpbem` is the umbrella meta-package for the modular Python implementation of MNPBEM-inspired workflows.
-Installing this package installs the complete set of scientific submodules needed for boundary-element plasmonic simulations.
+Installing this package pulls the complete set of scientific submodules required for boundary-element plasmonic simulations.
 
 ## Scientific Context
 
@@ -11,7 +11,7 @@ The full pipeline is organized around coupled operators in the frequency domain:
 A(lambda) x(lambda) = b(lambda)
 ```
 
-where `A` combines geometric operators, Green kernels, and material dispersion terms defined by the submodule ecosystem.
+where `A` combines geometric operators, Green-function kernels, and material-dispersion operators defined by the submodule ecosystem.
 
 ## Installation
 

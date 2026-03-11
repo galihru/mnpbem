@@ -1,4 +1,8 @@
-﻿# mnpbem
+# mnpbem
+
+[![PyPI version](https://img.shields.io/pypi/v/mnpbem.svg?cacheSeconds=60)](https://pypi.org/project/mnpbem/)
+[![Python versions](https://img.shields.io/pypi/pyversions/mnpbem.svg)](https://pypi.org/project/mnpbem/)
+[![Publish mnpbem](https://github.com/galihru/mnpbem/actions/workflows/mnpbem.yml/badge.svg?branch=main)](https://github.com/galihru/mnpbem/actions/workflows/mnpbem.yml)
 
 `mnpbem` is the umbrella meta-package for the modular Python implementation of MNPBEM-inspired workflows.
 Installing this package pulls the complete set of scientific submodules required for boundary-element plasmonic simulations.

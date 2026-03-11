@@ -1,10 +1,26 @@
-name: Release to PyPI & GitHub
+name: Publish mnpbem-material
 
 on:
   workflow_dispatch:
+    inputs:
+      bump:
+        description: "Version increment type"
+        required: true
+        default: patch
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
   push:
     branches:
       - main
+    paths:
+      - "mnpbem-material/**"
+      - "packages/mnpbem-material/**"
+      - "BEM/python_packages/packages/mnpbem-material/**"
+      - ".github/workflows/publish-mnpbem-material.yml"
+      - "BEM/python_packages/.github/workflows/publish-mnpbem-material.yml"
 
 permissions:
   contents: write
@@ -13,6 +29,7 @@ permissions:
 
 jobs:
   build_publish_and_release:
+    if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
     environment: pypi
 
@@ -45,23 +62,61 @@ jobs:
         shell: bash
         env:
           PYPROJECT_FILE: ${{ steps.locate.outputs.PYPROJECT_FILE }}
+          EVENT_NAME: ${{ github.event_name }}
+          INPUT_BUMP: ${{ github.event.inputs.bump }}
         run: |
           set -euo pipefail
           python - <<'PY'
           import os
+          import re
           import tomllib
           from pathlib import Path
 
           path = Path(os.environ["PYPROJECT_FILE"])
-          data = tomllib.loads(path.read_text(encoding="utf-8"))
+          event_name = os.environ["EVENT_NAME"]
+          bump_kind = (os.environ.get("INPUT_BUMP") or "").strip().lower()
+          if event_name != "workflow_dispatch" or bump_kind not in {"patch", "minor", "major"}:
+              bump_kind = "patch"
+
+          text = path.read_text(encoding="utf-8")
+          m = re.search(r'(?m)^version\s*=\s*"(\d+)\.(\d+)\.(\d+)"\s*$', text)
+          if not m:
+              raise SystemExit("version field not found in pyproject.toml")
+
+          major, minor, patch = map(int, m.groups())
+          if bump_kind == "major":
+              major, minor, patch = major + 1, 0, 0
+          elif bump_kind == "minor":
+              minor, patch = minor + 1, 0
+          else:
+              patch += 1
+
+          version = f"{major}.{minor}.{patch}"
+          updated = re.sub(
+              r'(?m)^version\s*=\s*"\d+\.\d+\.\d+"\s*$',
+              f'version = "{version}"',
+              text,
+              count=1,
+          )
+          path.write_text(updated, encoding="utf-8")
+
+          data = tomllib.loads(updated)
           project = data["project"]
           name = project["name"]
-          version = project["version"]
+          deps = project.get("dependencies", [])
+          related = [dep for dep in deps if dep.strip().startswith("mnpbem-")]
+          tag = f"mnpbem-material-v{version}"
 
           out = Path(os.environ["GITHUB_OUTPUT"])
           with out.open("a", encoding="utf-8") as fh:
             fh.write(f"PACKAGE_NAME={name}\n")
             fh.write(f"VERSION={version}\n")
+            fh.write(f"TAG_NAME={tag}\n")
+            fh.write(f"BUMP_KIND={bump_kind}\n")
+            fh.write("RELATED_DEPS<<EOF\n")
+            for dep in related:
+              fh.write(f"{dep}\n")
+            fh.write("EOF\n")
           PY
 
       - name: Start PyPI Deployment
@@ -103,6 +158,47 @@ jobs:
           TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
         run: |
           python -m twine upload --skip-existing dist/*
+
+      - name: Commit bumped version
+        shell: bash
+        env:
+          PYPROJECT_FILE: ${{ steps.locate.outputs.PYPROJECT_FILE }}
+          VERSION: ${{ steps.metadata.outputs.VERSION }}
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "$PYPROJECT_FILE"
+          git commit -m "release(mnpbem-material): v$VERSION [skip ci]"
+          git push origin HEAD:main
+
+      - name: Create and push tag
+        shell: bash
+        env:
+          TAG_NAME: ${{ steps.metadata.outputs.TAG_NAME }}
+        run: |
+          set -euo pipefail
+          git tag "$TAG_NAME"
+          git push origin "$TAG_NAME"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.metadata.outputs.TAG_NAME }}
+          name: ${{ steps.metadata.outputs.PACKAGE_NAME }} v${{ steps.metadata.outputs.VERSION }}
+          files: dist/*
+          body: |
+            Automated release for `${{ steps.metadata.outputs.PACKAGE_NAME }}`.
+
+            - Version: `${{ steps.metadata.outputs.VERSION }}`
+            - Bump type: `${{ steps.metadata.outputs.BUMP_KIND }}`
+            - PyPI: https://pypi.org/project/${{ steps.metadata.outputs.PACKAGE_NAME }}/${{ steps.metadata.outputs.VERSION }}/
+            - Install: `pip install ${{ steps.metadata.outputs.PACKAGE_NAME }}==${{ steps.metadata.outputs.VERSION }}`
+
+            Related mnpbem module dependencies:
+            ```
+            ${{ steps.metadata.outputs.RELATED_DEPS || 'None' }}
+            ```
 
       - name: Update Deployment Status
         if: success()

@@ -4,9 +4,9 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "mnpbem"
-version = "0.1.4"
+version = "0.1.6"
 description = "Meta-package that installs all MNPBEM Python submodules."
-readme = "README.md"
+readme = { file = "README_PYPI.md", content-type = "text/markdown" }
 requires-python = ">=3.10"
 authors = [
   { name = "GALIH RIDHO UTOMO", email = "g4lihru@students.unnes.ac.id" }
@@ -20,19 +20,19 @@ classifiers = [
   "Topic :: Scientific/Engineering :: Physics"
 ]
 dependencies = [
-  "mnpbem-base>=0.1.6",
-  "mnpbem-bem>=0.1.5",
-  "mnpbem-demo>=0.1.5",
-  "mnpbem-demo-mnpbem>=0.1.6",
-  "mnpbem-greenfun>=0.1.5",
-  "mnpbem-help>=0.1.5",
-  "mnpbem-material>=0.1.9",
-  "mnpbem-mesh2d>=0.1.5",
-  "mnpbem-mex>=0.1.5",
-  "mnpbem-mie>=0.1.5",
-  "mnpbem-misc>=0.1.6",
-  "mnpbem-particles>=0.1.5",
-  "mnpbem-simulation>=0.1.6",
+  "mnpbem-base>=0.1.7",
+  "mnpbem-bem>=0.1.6",
+  "mnpbem-demo>=0.1.6",
+  "mnpbem-demo-mnpbem>=0.1.7",
+  "mnpbem-greenfun>=0.1.6",
+  "mnpbem-help>=0.1.6",
+  "mnpbem-material>=0.1.10",
+  "mnpbem-mesh2d>=0.1.8",
+  "mnpbem-mex>=0.1.6",
+  "mnpbem-mie>=0.1.6",
+  "mnpbem-misc>=0.1.8",
+  "mnpbem-particles>=0.1.6",
+  "mnpbem-simulation>=0.1.7",
 ]
 
 [project.urls]

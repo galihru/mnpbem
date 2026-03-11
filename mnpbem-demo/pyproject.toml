@@ -4,9 +4,9 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "mnpbem-demo"
-version = "0.1.5"
+version = "0.1.6"
 description = "Reproducible demonstration scaffolding for MNPBEM Python modules."
-readme = "README.md"
+readme = { file = "README_PYPI.md", content-type = "text/markdown" }
 requires-python = ">=3.10"
 authors = [
   { name = "GALIH RIDHO UTOMO", email = "g4lihru@students.unnes.ac.id" }

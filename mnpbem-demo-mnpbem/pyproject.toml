@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "mnpbem-demo-mnpbem"
-version = "0.1.9"
+version = "0.1.10"
 description = "Extended demonstration layer corresponding to the MATLAB Demo MNPBEM folder."
 readme = { file = "README_PYPI.md", content-type = "text/markdown" }
 requires-python = ">=3.10"

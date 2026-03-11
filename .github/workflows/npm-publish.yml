@@ -37,7 +37,7 @@ jobs:
       # ── 1. Publish to npmjs.com ──────────────────────────────────────────────
       - name: Configure npmjs.com registry
         run: |
-          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > \
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPMJS_API_TOKEN }}" > \
             npm-packages/.npmrc
 
       - name: Set publishConfig → npmjs.com
@@ -58,21 +58,21 @@ jobs:
         run: npm publish
         continue-on-error: true
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPMJS_API_TOKEN }}
 
       - name: Publish mnp-mie → npmjs.com
         working-directory: npm-packages/packages/mnp-mie
         run: npm publish
         continue-on-error: true
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPMJS_API_TOKEN }}
 
       - name: Publish mnp → npmjs.com
         working-directory: npm-packages/packages/mnp
         run: npm publish
         continue-on-error: true
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPMJS_API_TOKEN }}
 
       # ── 2. Publish to GitHub Package Registry ───────────────────────────────
       - name: Configure GitHub Package Registry

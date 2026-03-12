@@ -14,6 +14,7 @@ option(BUILD_EXAMPLES "Build example programs" OFF)
 # Library target
 add_library(mnp_plasmon src/mnp_plasmon.c)
 add_library(mnp_plasmon::mnp_plasmon ALIAS mnp_plasmon)
+set_target_properties(mnp_plasmon PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS ON)
 target_include_directories(mnp_plasmon PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>

@@ -17,6 +17,7 @@ find_package(Threads REQUIRED)
 # Main library
 add_library(mnp_plasmon_cxx src/mnp_plasmon.cpp)
 add_library(mnp_plasmon_cxx::mnp_plasmon_cxx ALIAS mnp_plasmon_cxx)
+set_target_properties(mnp_plasmon_cxx PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS ON)
 target_include_directories(mnp_plasmon_cxx PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>

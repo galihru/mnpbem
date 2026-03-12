@@ -26,7 +26,9 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '8.0.x'
+          dotnet-version: |
+            8.0.x
+            6.0.x
 
       - name: Add nuget.org source
         run: dotnet nuget add source https://api.nuget.org/v3/index.json --name nuget.org || true

@@ -41,9 +41,15 @@ jobs:
           cd rust-mnp-plasmon
           cargo build --release
 
-      - name: Publish to crates.io
+      - name: Configure Cargo credentials
         env:
           CARGO_TOKEN: ${{ secrets.CARGO_TOKEN }}
+        run: |
+          mkdir -p ~/.cargo
+          echo "[registries.crates-io]" > ~/.cargo/credentials.toml
+          echo "token = \"$CARGO_TOKEN\"" >> ~/.cargo/credentials.toml
+
+      - name: Publish to crates.io
         run: |
           cd rust-mnp-plasmon
           cargo publish

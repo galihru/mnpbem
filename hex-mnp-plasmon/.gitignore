@@ -1,0 +1,5 @@
+_build/
+doc/
+.tools/
+rebar.lock
+erl_crash.dump

@@ -1,3 +1,0 @@
-%% encoding: UTF-8
-{application,mnp_plasmon}.
-{modules,[mnp_plasmon,mnp_plasmon_material,mnp_plasmon_mie]}.

@@ -7,7 +7,7 @@
 [![npm](https://img.shields.io/npm/v/%40galihru%2Fmnp.svg)](https://www.npmjs.com/package/@galihru/mnp)
 [![NuGet](https://img.shields.io/nuget/v/MnpPlasmon.svg)](https://www.nuget.org/packages/MnpPlasmon/)
 
-Multi-language implementation of optical response calculations for metallic nanoparticles, based on the Drude dielectric model and the Rayleigh quasi-static approximation. Covers Python, JavaScript, C#, Rust, R, and C/C++.
+Multi-language implementation of optical response calculations for metallic nanoparticles, based on the Drude dielectric model and the Rayleigh quasi-static approximation. Covers Python, JavaScript, C#, Rust, R, Julia, C/C++, and Conan.
 
 ## Contents
 
@@ -77,7 +77,9 @@ where $k = 2\pi n_m/\lambda$ is the wave vector magnitude in the medium.
 | C# / .NET | `MnpPlasmon` | NuGet | [![NuGet](https://img.shields.io/nuget/v/MnpPlasmon.svg)](https://www.nuget.org/packages/MnpPlasmon/) |
 | Rust | `mnp-plasmon` | Crates.io | [![Crates.io](https://img.shields.io/crates/v/mnp-plasmon.svg)](https://crates.io/crates/mnp-plasmon) |
 | R | `mnpPlasmonR` | CRAN | [![CRAN](https://www.r-pkg.org/badges/version/mnpPlasmonR)](https://cran.r-project.org/package=mnpPlasmonR) |
+| Julia | `MnpPlasmon.jl` | Julia General Registry | [![Julia](https://img.shields.io/badge/julia-MnpPlasmon.jl-9558B2.svg)](https://github.com/galihru/mnpbem/tree/main/julia-mnp-plasmon) |
 | C / C++ | `mnp-plasmon` | vcpkg | — |
+| C / C++ | `mnp-plasmon` | Conan Center | [![Conan](https://img.shields.io/badge/conan-mnp--plasmon-blue.svg)](https://conan.io/center) |
 
 ---
 
@@ -114,6 +116,19 @@ mnp-plasmon = "0.1"
 
 ```r
 install.packages("mnpPlasmonR")
+```
+
+**Julia**
+
+```julia
+using Pkg
+Pkg.add("MnpPlasmon")
+```
+
+**C / C++ via Conan**
+
+```bash
+conan install --requires="mnp-plasmon/0.1.0" --build=missing
 ```
 
 ---
@@ -176,6 +191,15 @@ sphere_result_t r = mnp_sphere_response(550.0, 25.0, "Au", 1.0);
 printf("%.2f nm²\n", r.c_ext);
 ```
 
+**Julia**
+
+```julia
+using MnpPlasmon
+
+r = sphere_response(550.0, 25.0, "Au")
+println(r.c_ext, " nm²")
+```
+
 ---
 
 ## Package Index
@@ -216,7 +240,9 @@ GitHub Release (vX.Y.Z)
     +-- Publish JavaScript  --> npm
     +-- Publish C# (.NET)   --> NuGet
     +-- Publish Rust        --> Crates.io
-    +-- R CMD check         --> CRAN (manual upload, see below)
+    +-- R CMD check         --> CRAN (manual upload to cran.r-project.org/submit.html)
+    +-- Julia tests         --> Julia General Registry (trigger via @JuliaRegistrator)
+    +-- Conan recipe check  --> Conan Center (manual PR to conan-center-index)
     +-- Publish C / C++     --> vcpkg
 ```
 
@@ -228,21 +254,6 @@ git push origin v1.0.0
 ```
 
 See [`.github/workflows/release-master.yml`](.github/workflows/release-master.yml) for the full workflow definition.
-
-### CRAN Submission (R package)
-
-The CI workflow runs `R CMD check --as-cran` and produces a source tarball as a build artifact. CRAN does not provide an API for automated uploads, so the final step is manual:
-
-1. Go to the Actions tab, open the latest `R CMD Check` run, and download the artifact named `r-mnp-plasmon-source`. Extract `mnpPlasmonR_0.1.0.tar.gz`.
-2. Open [https://cran.r-project.org/submit.html](https://cran.r-project.org/submit.html).
-3. Fill in the form:
-   - **Your name**: Galih Ridho Utomo
-   - **Your email address**: g4lihru@students.unnes.ac.id
-   - **Uploading**: select the `.tar.gz` file
-   - **Optional comment**: brief description, e.g. *"Initial submission of mnpPlasmonR — Drude/Rayleigh optical response for metallic nanoparticles."*
-4. Click **Upload package**.
-5. A confirmation email will arrive at the address above. Check it and follow any instructions from the CRAN team. Typical response time is 1–14 days.
-6. If reviewers request changes, apply fixes, increment the version in `r-mnp-plasmon/DESCRIPTION`, push, let CI build a new tarball, and resubmit.
 
 ---
 

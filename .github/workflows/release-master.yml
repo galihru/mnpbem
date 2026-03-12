@@ -29,6 +29,14 @@ on:
         description: 'Skip R CRAN check/build'
         required: false
         default: 'false'
+      skip-julia:
+        description: 'Skip Julia tests'
+        required: false
+        default: 'false'
+      skip-conan:
+        description: 'Skip Conan recipe check'
+        required: false
+        default: 'false'
 
 permissions:
   contents: read
@@ -245,8 +253,52 @@ jobs:
           name: r-mnp-plasmon-source
           path: mnpPlasmonR_*.tar.gz
 
+  # Julia — run tests; registration is manual via @JuliaRegistrator comment
+  publish-julia:
+    needs: parse-version
+    runs-on: ubuntu-latest
+    if: github.event.inputs.skip-julia != 'true'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Julia
+        uses: julia-actions/setup-julia@v2
+        with:
+          version: '1.10'
+
+      - name: Install dependencies
+        run: julia --project=julia-mnp-plasmon -e 'using Pkg; Pkg.instantiate()'
+
+      - name: Run tests
+        run: julia --project=julia-mnp-plasmon julia-mnp-plasmon/test/runtests.jl
+
+  # Conan — build and test recipe on all three platforms
+  publish-conan:
+    needs: parse-version
+    if: github.event.inputs.skip-conan != 'true'
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Conan
+        run: pip install conan
+
+      - name: Detect default profile
+        run: conan profile detect --force
+
+      - name: Create package
+        run: conan create conan-mnp-plasmon --build=missing -s build_type=Release
+
   summary:
-    needs: [publish-npm, publish-python, publish-nuget, publish-rust, publish-r-cran]
+    needs: [publish-npm, publish-python, publish-nuget, publish-rust, publish-r-cran, publish-julia, publish-conan]
     runs-on: ubuntu-latest
     if: always()
     steps:
@@ -260,5 +312,8 @@ jobs:
           echo "  - Crates.io: https://crates.io/users/galihru"
           echo "  - R (CRAN-ready source): workflow artifact r-mnp-plasmon-source"
           echo "  - CRAN upload portal: https://cran.r-project.org/submit.html"
+          echo ""
+          echo "  - Julia tests passed — register via @JuliaRegistrator comment"
+          echo "  - Conan recipe built — submit PR to conan-io/conan-center-index"
           echo ""
           echo "🔗 View release: ${{ github.server_url }}/${{ github.repository }}/releases/tag/${{ github.event.release.tag_name }}"

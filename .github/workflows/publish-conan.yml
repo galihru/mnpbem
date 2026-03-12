@@ -1,0 +1,56 @@
+name: Conan — Build & Test Recipe
+
+on:
+  push:
+    paths:
+      - 'conan-mnp-plasmon/**'
+  workflow_dispatch:
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Conan
+        run: pip install conan
+
+      - name: Detect default profile
+        run: conan profile detect --force
+
+      - name: Create package (release)
+        run: conan create conan-mnp-plasmon --build=missing -s build_type=Release
+
+      - name: Create package (debug)
+        run: conan create conan-mnp-plasmon --build=missing -s build_type=Debug
+
+  # ConanCenter submission is a manual PR to:
+  # https://github.com/conan-io/conan-center-index
+  # Steps:
+  #   1. Fork conan-io/conan-center-index
+  #   2. Add a recipe folder: recipes/mnp-plasmon/all/conanfile.py
+  #   3. Open a pull request — ConanCenter bot runs its own CI
+  #   4. After approval the package appears on https://conan.io/center
+  conan-center-hint:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Submission instructions
+        run: |
+          echo "Recipe builds passed on Linux, macOS, and Windows."
+          echo ""
+          echo "To publish to ConanCenter:"
+          echo "  1. Fork https://github.com/conan-io/conan-center-index"
+          echo "  2. Copy conan-mnp-plasmon/conanfile.py into"
+          echo "       recipes/mnp-plasmon/all/conanfile.py"
+          echo "  3. Add recipes/mnp-plasmon/config.yml listing the version."
+          echo "  4. Open a pull request — ConanCenter CI validates the recipe."
+          echo "  5. After approval the package appears on conan.io/center."

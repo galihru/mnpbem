@@ -9,7 +9,7 @@ homepage = "https://github.com/galihru/mnpbem"
 license = "GPL-3.0-only"
 readme = "README.md"
 keywords = ["plasmon", "nanoparticles", "optics", "drude", "rayleigh"]
-categories = ["science", "science::physics"]
+categories = ["science"]
 
 [dependencies]
 num-complex = "0.4"

@@ -15,7 +15,7 @@
 
 (define categories '(math scientific-computing physics))
 
-(define license 'GPL-3.0)
+(define license "GPL-3.0")
 
 (define scribblings
   '(("scribblings/mnp-plasmon.scrbl"

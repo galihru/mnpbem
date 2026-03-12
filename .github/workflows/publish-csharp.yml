@@ -1,0 +1,51 @@
+name: Publish CSharp Package
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+  push:
+    tags:
+      - 'csharp-v*'
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Add nuget.org source
+        run: dotnet nuget add source https://api.nuget.org/v3/index.json --name nuget.org || true
+
+      - name: Restore
+        run: dotnet restore csharp-mnp-plasmon/MnpPlasmon/MnpPlasmon.csproj
+
+      - name: Build
+        run: dotnet build csharp-mnp-plasmon/MnpPlasmon/MnpPlasmon.csproj -c Release --no-restore
+
+      - name: Test
+        run: dotnet test csharp-mnp-plasmon/MnpPlasmon.Tests/MnpPlasmon.Tests.csproj -c Release --no-restore
+
+      - name: Pack
+        run: dotnet pack csharp-mnp-plasmon/MnpPlasmon/MnpPlasmon.csproj -c Release --no-build -o artifacts
+
+      - name: Publish to NuGet.org
+        if: secrets.NUGET_API_KEY != ''
+        run: dotnet nuget push artifacts/*.nupkg --api-key "${{ secrets.NUGET_API_KEY }}" --source https://api.nuget.org/v3/index.json --skip-duplicate
+
+      - name: Publish to GitHub Packages
+        if: secrets.GH_PACKAGES_TOKEN != ''
+        run: |
+          dotnet nuget add source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" --name github --username "${{ github.actor }}" --password "${{ secrets.GH_PACKAGES_TOKEN }}" --store-password-in-clear-text
+          dotnet nuget push artifacts/*.nupkg --source github --api-key "${{ secrets.GH_PACKAGES_TOKEN }}" --skip-duplicate

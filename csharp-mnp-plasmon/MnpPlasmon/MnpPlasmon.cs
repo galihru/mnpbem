@@ -58,7 +58,7 @@ public static class MnpPlasmon
     /// <summary>
     /// Get list of available materials
     /// </summary>
-    public static IReadOnlyList<Material> MaterialList() => Materials.AsReadOnly();
+    public static IReadOnlyList<Material> MaterialList() => Array.AsReadOnly(Materials);
 
     /// <summary>
     /// Check if material exists in database

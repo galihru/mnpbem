@@ -1,44 +1,43 @@
-
-    "name":  "@galihru/mnp",
-    "version":  "0.1.4",
-    "description":  "Integrated electromagnetic response of metallic nanoparticles: Drude dielectric model combined with Rayleigh quasi-static scattering.",
-    "type":  "module",
-    "main":  "./src/index.js",
-    "exports":  {
-                    ".":  "./src/index.js"
-                },
-    "files":  [
-                  "src",
-                  "examples",
-                  "README.md"
-              ],
-    "keywords":  [
-                     "nanoparticle",
-                     "plasmonics",
-                     "nanophotonics",
-                     "mie-scattering",
-                     "drude-model",
-                     "localized-surface-plasmon",
-                     "lspr",
-                     "cross-section",
-                     "electrodynamics",
-                     "simulation"
-                 ],
-    "author":  "GALIH RIDHO UTOMO \u003cg4lihru@students.unnes.ac.id\u003e",
-    "license":  "GPL-2.0-only",
-    "dependencies":  {
-                         "@galihru/mnp-material":  "0.1.4",
-                         "@galihru/mnp-mie":  "0.1.4"
-                     },
-    "repository":  {
-                       "type":  "git",
-                       "url":  "https://github.com/galihru/mnpbem.git"
-                   },
-    "publishConfig":  {
-                          "registry":  "https://npm.pkg.github.com/",
-                          "access":  "public"
-                      },
-    "scripts":  {
-                    "test":  "node --test"
-                }
+{
+  "name": "@galihru/mnp",
+  "version": "0.1.4",
+  "description": "Integrated electromagnetic response of metallic nanoparticles: Drude dielectric model combined with Rayleigh quasi-static scattering.",
+  "type": "module",
+  "main": "./src/index.js",
+  "exports": {
+    ".": "./src/index.js"
+  },
+  "files": [
+    "src",
+    "examples",
+    "README.md"
+  ],
+  "keywords": [
+    "nanoparticle",
+    "plasmonics",
+    "nanophotonics",
+    "mie-scattering",
+    "drude-model",
+    "localized-surface-plasmon",
+    "lspr",
+    "cross-section",
+    "electrodynamics",
+    "simulation"
+  ],
+  "author": "GALIH RIDHO UTOMO <g4lihru@students.unnes.ac.id>",
+  "license": "GPL-2.0-only",
+  "dependencies": {
+    "@galihru/mnp-material": "0.1.4",
+    "@galihru/mnp-mie": "0.1.4"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/galihru/mnpbem.git"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "test": "node --test"
+  }
 }

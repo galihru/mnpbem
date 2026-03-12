@@ -1,39 +1,38 @@
-
-    "name":  "@galihru/mnp-mie",
-    "version":  "0.1.4",
-    "description":  "Rayleigh quasi-static scattering: polarizability and electromagnetic cross sections for spherical nanoparticles.",
-    "type":  "module",
-    "main":  "./src/index.js",
-    "exports":  {
-                    ".":  "./src/index.js"
-                },
-    "files":  [
-                  "src",
-                  "README.md"
-              ],
-    "keywords":  [
-                     "mie-scattering",
-                     "rayleigh",
-                     "nanoparticle",
-                     "cross-section",
-                     "extinction",
-                     "polarizability",
-                     "plasmonics",
-                     "nanophotonics",
-                     "scattering",
-                     "absorption"
-                 ],
-    "author":  "GALIH RIDHO UTOMO \u003cg4lihru@students.unnes.ac.id\u003e",
-    "license":  "GPL-2.0-only",
-    "repository":  {
-                       "type":  "git",
-                       "url":  "https://github.com/galihru/mnpbem.git"
-                   },
-    "publishConfig":  {
-                          "registry":  "https://npm.pkg.github.com/",
-                          "access":  "public"
-                      },
-    "scripts":  {
-                    "test":  "node --test"
-                }
+{
+  "name": "@galihru/mnp-mie",
+  "version": "0.1.4",
+  "description": "Rayleigh quasi-static scattering: polarizability and electromagnetic cross sections for spherical nanoparticles.",
+  "type": "module",
+  "main": "./src/index.js",
+  "exports": {
+    ".": "./src/index.js"
+  },
+  "files": [
+    "src",
+    "README.md"
+  ],
+  "keywords": [
+    "mie-scattering",
+    "rayleigh",
+    "nanoparticle",
+    "cross-section",
+    "extinction",
+    "polarizability",
+    "plasmonics",
+    "nanophotonics",
+    "scattering",
+    "absorption"
+  ],
+  "author": "GALIH RIDHO UTOMO <g4lihru@students.unnes.ac.id>",
+  "license": "GPL-2.0-only",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/galihru/mnpbem.git"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "test": "node --test"
+  }
 }

@@ -53,6 +53,7 @@ jobs:
 
       - name: Publish to GitHub Packages
         if: ${{ env.HAS_GH_TOKEN != '' }}
+        continue-on-error: true
         run: |
           dotnet nuget remove source github || true
           dotnet nuget add source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" --name github --username "${{ github.actor }}" --password "${{ secrets.GH_TOKEN }}" --store-password-in-clear-text

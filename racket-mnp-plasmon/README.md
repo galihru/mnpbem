@@ -111,4 +111,4 @@ Galih Ridho Utomo <g4lihru@students.unnes.ac.id>
 
 ## License
 
-MIT
+GPL-3.0 license

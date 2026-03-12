@@ -1,8 +1,10 @@
 #lang info
 
-(define collection 'multi)
+(define collection "mnp-plasmon")
 
 (define deps '(("base" #:version "8.0")))
+
+(define build-deps '("scribble-lib" "racket-doc"))
 
 (define implies '())
 

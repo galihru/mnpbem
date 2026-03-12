@@ -17,7 +17,6 @@ jobs:
     runs-on: ubuntu-latest
     env:
       HAS_NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
-      HAS_GH_TOKEN: ${{ secrets.GH_TOKEN }}
 
     steps:
       - name: Checkout
@@ -52,9 +51,6 @@ jobs:
         run: dotnet nuget push artifacts/*.nupkg --api-key "${{ secrets.NUGET_API_KEY }}" --source https://api.nuget.org/v3/index.json --skip-duplicate
 
       - name: Publish to GitHub Packages
-        if: ${{ env.HAS_GH_TOKEN != '' }}
-        continue-on-error: true
-        run: |
-          dotnet nuget remove source github || true
-          dotnet nuget add source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" --name github --username "${{ github.actor }}" --password "${{ secrets.GH_TOKEN }}" --store-password-in-clear-text
-          dotnet nuget push artifacts/*.nupkg --source github --api-key "${{ secrets.GH_TOKEN }}" --skip-duplicate
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: dotnet nuget push artifacts/*.nupkg --source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" --api-key "${{ secrets.GITHUB_TOKEN }}" --skip-duplicate

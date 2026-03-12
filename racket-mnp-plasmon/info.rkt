@@ -15,6 +15,8 @@
 
 (define categories '(math scientific-computing physics))
 
+(define license 'MIT)
+
 (define scribblings
   '(("scribblings/mnp-plasmon.scrbl"
      (multi-page)

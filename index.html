@@ -959,7 +959,7 @@ document.getElementById("btnCopy").addEventListener("click", () => {
 document.getElementById("btnDl").addEventListener("click", () => {
   const a = document.createElement("a");
   a.href = URL.createObjectURL(new Blob([document.documentElement.outerHTML], { type: "text/html" }));
-  a.download = "plasmon.html";
+  a.download = "plasmon-visualizer.html";
   a.click();
 });
 

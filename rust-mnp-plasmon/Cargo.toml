@@ -1,6 +1,6 @@
 [package]
 name = "mnp-plasmon"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 authors = ["galihru"]
 description = "Efficient Rust library for calculating optical response of metallic nanoparticles using Drude model and Rayleigh approximation. Supports Au, Ag, Al materials."

@@ -9,9 +9,10 @@
 | Language | Package | Status | Registry | Docs |
 |----------|---------|--------|----------|------|
 | **Python** | `mnpbem*` | [![PyPI version](https://img.shields.io/pypi/v/mnpbem.svg?cacheSeconds=60)](https://pypi.org/project/mnpbem/) | [PyPI](https://pypi.org/user/galihru/) | [Docs](https://mnpbem.readthedocs.io/) |
-| **JavaScript** | `mnp*` | [![npm](https://img.shields.io/npm/v/mnp-plasmon.svg)](https://www.npmjs.com/~galihru?tab=packages) | [npm](https://www.npmjs.com/~galihru?tab=packages) | [JsDoc](https://github.com/galihru/mnpbem/tree/main/npm-packages) |
+| **JavaScript** | `@galihru/mnp*` | [![npm mnp](https://img.shields.io/npm/v/%40galihru%2Fmnp.svg)](https://www.npmjs.com/package/@galihru/mnp) [![npm mnp-material](https://img.shields.io/npm/v/%40galihru%2Fmnp-material.svg)](https://www.npmjs.com/package/@galihru/mnp-material) [![npm mnp-mie](https://img.shields.io/npm/v/%40galihru%2Fmnp-mie.svg)](https://www.npmjs.com/package/@galihru/mnp-mie) | [npm](https://www.npmjs.com/~galihru?tab=packages) | [JsDoc](https://github.com/galihru/mnpbem/tree/main/npm-packages) |
 | **.NET/C#** | `MnpPlasmon` | [![NuGet](https://img.shields.io/nuget/v/MnpPlasmon.svg)](https://www.nuget.org/packages/MnpPlasmon/) | [NuGet](https://www.nuget.org/profiles/galihru) | [API](https://github.com/galihru/mnpbem/tree/main/csharp-mnp-plasmon) |
 | **Rust** | `mnp-plasmon` | [![Crates.io](https://img.shields.io/crates/v/mnp-plasmon.svg)](https://crates.io/crates/mnp-plasmon) | [Crates.io](https://crates.io/users/galihru) | [docs.rs](https://docs.rs/mnp-plasmon/) |
+| **R** | `mnpPlasmonR` | [![CRAN status](https://www.r-pkg.org/badges/version/mnpPlasmonR)](https://cran.r-project.org/package=mnpPlasmonR) | [CRAN submission](https://cran.r-project.org/submit.html) | [R API](https://github.com/galihru/mnpbem/tree/main/r-mnp-plasmon) |
 | **C/C++** | `mnp-plasmon` | ![Status](https://img.shields.io/badge/status-stable-brightgreen) | [vcpkg](https://github.com/microsoft/vcpkg) | [API](https://github.com/galihru/mnpbem/tree/main/c-mnp-plasmon) |
 
 ![Example Image](https://raw.githubusercontent.com/galihru/mnpbem/c77a7cf0d745bb0fefb81f98bff0611a9d9afda9/mnpbem/example%20electric%20field%20demo.png)
@@ -111,11 +112,11 @@ print(f"σ_abs = {response.c_abs:.2f} nm²")
 ### JavaScript/TypeScript (npm)
 
 ```bash
-npm install mnp-material mnp-mie mnp
+npm install @galihru/mnp-material @galihru/mnp-mie @galihru/mnp
 ```
 
 ```javascript
-import { MnpPlasmon } from 'mnp';
+import { MnpPlasmon } from '@galihru/mnp';
 
 const result = MnpPlasmon.sphereResponse({
   wavelength: 550,
@@ -225,11 +226,23 @@ int main() {
 | Language | Package | Registry |
 |----------|---------|----------|
 | Python | `mnp-plasmon` | [PyPI](https://pypi.org/project/mnp-plasmon/) |
-| JavaScript | `mnp`, `mnp-material`, `mnp-mie` | [npm](https://www.npmjs.com/~galihru?tab=packages) |
+| JavaScript | `@galihru/mnp`, `@galihru/mnp-material`, `@galihru/mnp-mie` | [npm](https://www.npmjs.com/~galihru?tab=packages) |
 | C# / .NET | `MnpPlasmon` | [NuGet](https://www.nuget.org/packages/MnpPlasmon/) |
 | Rust | `mnp-plasmon` | [Crates.io](https://crates.io/crates/mnp-plasmon) |
+| R | `mnpPlasmonR` (CRAN-ready) | [CRAN submission portal](https://cran.r-project.org/submit.html) |
 | C | `mnp-plasmon` | [vcpkg](https://github.com/microsoft/vcpkg) |
 | C++ | `mnp-plasmon` | [vcpkg](https://github.com/microsoft/vcpkg) |
+
+## R / CRAN Track
+
+R package source is in `r-mnp-plasmon` with package name `mnpPlasmonR`.
+
+CRAN publication is partially automated and partially manual:
+
+1. CI runs `R CMD check` and builds source tarball.
+2. Maintainer uploads `mnpPlasmonR_*.tar.gz` to CRAN submit page.
+
+CRAN submit page: https://cran.r-project.org/submit.html
 
 ## 🔄 Release & Publishing Pipeline
 

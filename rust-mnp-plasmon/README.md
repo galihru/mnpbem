@@ -57,21 +57,25 @@ fn main() -> Result<(), String> {
 
 The Drude dielectric function is given by:
 
-$$\varepsilon(\omega) = \varepsilon_\infty - \frac{\omega_p^2}{\omega(\omega + i\gamma)}$$
+```text
+epsilon(omega) = epsilon_inf - (omega_p^2) / (omega * (omega + i*gamma))
+```
 
 where:
-- ωₚ is the plasma frequency
-- γ is the damping coefficient
-- ω is the angular frequency
+- `omega_p` is the plasma frequency
+- `gamma` is the damping coefficient
+- `omega` is the angular frequency
 
 The Rayleigh approximation for spherical particles yields a frequency-dependent polarizability:
 
-$$\alpha(\omega) = 4\pi a^3 \frac{\varepsilon_p(\omega) - \varepsilon_m}{\varepsilon_p(\omega) + 2\varepsilon_m}$$
+```text
+alpha(omega) = 4*pi*a^3 * (epsilon_p(omega) - epsilon_m) / (epsilon_p(omega) + 2*epsilon_m)
+```
 
 Cross-sections are computed as:
-- **Extinction**: σ_ext = (4π/k) Im[α]
-- **Scattering**: σ_sca = (k⁴/6π)|α|²
-- **Absorption**: σ_abs = σ_ext - σ_sca
+- **Extinction**: `sigma_ext = (4*pi/k) * Im(alpha)`
+- **Scattering**: `sigma_sca = (k^4/(6*pi)) * |alpha|^2`
+- **Absorption**: `sigma_abs = sigma_ext - sigma_sca`
 
 ## Building from Source
 

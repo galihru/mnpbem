@@ -25,6 +25,10 @@ on:
         description: 'Skip Crates.io publish'
         required: false
         default: 'false'
+      skip-r-cran:
+        description: 'Skip R CRAN check/build'
+        required: false
+        default: 'false'
 
 permissions:
   contents: read
@@ -83,7 +87,7 @@ jobs:
 
       - name: Publish to npm
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPMJS_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPMJS_API_TOKEN }}
         run: |
           cd npm-packages
           npm publish packages/mnp --access public
@@ -211,8 +215,38 @@ jobs:
             fi
           fi
 
+  # Trigger R CRAN check/build (manual upload to CRAN)
+  publish-r-cran:
+    needs: parse-version
+    runs-on: ubuntu-latest
+    if: github.event.inputs.skip-r-cran != 'true'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup R
+        uses: r-lib/actions/setup-r@v2
+
+      - name: Install R dependencies
+        uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: any::rcmdcheck
+
+      - name: R CMD check
+        run: |
+          Rscript -e "rcmdcheck::rcmdcheck('r-mnp-plasmon', args = '--no-manual', error_on = 'warning')"
+
+      - name: Build source tarball
+        run: |
+          R CMD build r-mnp-plasmon
+
+      - name: Upload CRAN source artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: r-mnp-plasmon-source
+          path: mnpPlasmonR_*.tar.gz
+
   summary:
-    needs: [publish-npm, publish-python, publish-nuget, publish-rust]
+    needs: [publish-npm, publish-python, publish-nuget, publish-rust, publish-r-cran]
     runs-on: ubuntu-latest
     if: always()
     steps:
@@ -224,5 +258,7 @@ jobs:
           echo "  - PyPI: https://pypi.org/user/galihru/"
           echo "  - NuGet: https://www.nuget.org/profiles/galihru"
           echo "  - Crates.io: https://crates.io/users/galihru"
+          echo "  - R (CRAN-ready source): workflow artifact r-mnp-plasmon-source"
+          echo "  - CRAN upload portal: https://cran.r-project.org/submit.html"
           echo ""
           echo "🔗 View release: ${{ github.server_url }}/${{ github.repository }}/releases/tag/${{ github.event.release.tag_name }}"

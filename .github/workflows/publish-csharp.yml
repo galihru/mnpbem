@@ -41,11 +41,11 @@ jobs:
         run: dotnet pack csharp-mnp-plasmon/MnpPlasmon/MnpPlasmon.csproj -c Release --no-build -o artifacts
 
       - name: Publish to NuGet.org
-        if: secrets.NUGET_API_KEY != ''
+        if: ${{ secrets.NUGET_API_KEY != '' }}
         run: dotnet nuget push artifacts/*.nupkg --api-key "${{ secrets.NUGET_API_KEY }}" --source https://api.nuget.org/v3/index.json --skip-duplicate
 
       - name: Publish to GitHub Packages
-        if: secrets.GH_TOKEN != ''
+        if: ${{ secrets.GH_TOKEN != '' }}
         run: |
           dotnet nuget remove source github || true
           dotnet nuget add source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" --name github --username "${{ github.actor }}" --password "${{ secrets.GH_TOKEN }}" --store-password-in-clear-text

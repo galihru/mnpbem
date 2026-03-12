@@ -32,7 +32,9 @@ jobs:
         run: dotnet nuget add source https://api.nuget.org/v3/index.json --name nuget.org || true
 
       - name: Restore
-        run: dotnet restore csharp-mnp-plasmon/MnpPlasmon/MnpPlasmon.csproj
+        run: |
+          dotnet restore csharp-mnp-plasmon/MnpPlasmon/MnpPlasmon.csproj
+          dotnet restore csharp-mnp-plasmon/MnpPlasmon.Tests/MnpPlasmon.Tests.csproj
 
       - name: Build
         run: dotnet build csharp-mnp-plasmon/MnpPlasmon/MnpPlasmon.csproj -c Release --no-restore

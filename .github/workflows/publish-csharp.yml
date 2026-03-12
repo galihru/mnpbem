@@ -45,7 +45,8 @@ jobs:
         run: dotnet nuget push artifacts/*.nupkg --api-key "${{ secrets.NUGET_API_KEY }}" --source https://api.nuget.org/v3/index.json --skip-duplicate
 
       - name: Publish to GitHub Packages
-        if: secrets.GH_PACKAGES_TOKEN != ''
+        if: secrets.GH_TOKEN != ''
         run: |
-          dotnet nuget add source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" --name github --username "${{ github.actor }}" --password "${{ secrets.GH_PACKAGES_TOKEN }}" --store-password-in-clear-text
-          dotnet nuget push artifacts/*.nupkg --source github --api-key "${{ secrets.GH_PACKAGES_TOKEN }}" --skip-duplicate
+          dotnet nuget remove source github || true
+          dotnet nuget add source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" --name github --username "${{ github.actor }}" --password "${{ secrets.GH_TOKEN }}" --store-password-in-clear-text
+          dotnet nuget push artifacts/*.nupkg --source github --api-key "${{ secrets.GH_TOKEN }}" --skip-duplicate

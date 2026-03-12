@@ -198,7 +198,18 @@ jobs:
           CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_TOKEN }}
         run: |
           cd rust-mnp-plasmon
-          cargo publish --allow-dirty
+          set +e
+          output=$(cargo publish --allow-dirty 2>&1)
+          status=$?
+          set -e
+          echo "$output"
+          if [ $status -ne 0 ]; then
+            if echo "$output" | grep -qi "already exists on crates.io index"; then
+              echo "crate version already published; continuing"
+            else
+              exit $status
+            fi
+          fi
 
   summary:
     needs: [publish-npm, publish-python, publish-nuget, publish-rust]

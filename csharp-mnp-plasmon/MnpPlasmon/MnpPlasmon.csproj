@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Version>0.1.0</Version>
+    <PackageId>MnpPlasmon</PackageId>
+    <Title>MNP Plasmon - Metallic Nanoparticle Optical Response</Title>
+    <Description>Efficient .NET library for calculating optical response of metallic nanoparticles using Drude model and Rayleigh approximation. Supports Au, Ag, Al materials.</Description>
+    <Authors>galihru</Authors>
+    <PackageProjectUrl>https://github.com/galihru/mnpbem</PackageProjectUrl>
+    <PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
+    <RepositoryUrl>https://github.com/galihru/mnpbem</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>plasmon;nanoparticles;optics;drude;rayleigh</PackageTags>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- No external dependencies for core library -->
+  </ItemGroup>
+
+</Project>

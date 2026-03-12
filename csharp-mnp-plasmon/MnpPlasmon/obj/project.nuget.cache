@@ -1,0 +1,42 @@
+{
+  "version": 2,
+  "dgSpecHash": "AAnQi43QHa0=",
+  "success": false,
+  "projectFilePath": "C:\\Users\\asus\\public\\_mnpbem_repo\\csharp-mnp-plasmon\\MnpPlasmon\\MnpPlasmon.csproj",
+  "expectedPackageFiles": [],
+  "logs": [
+    {
+      "code": "NU1101",
+      "level": "Error",
+      "message": "Unable to find package Microsoft.NETCore.App.Ref. No packages exist with this id in source(s): C:\\Program Files\\dotnet\\library-packs, Microsoft Visual Studio Offline Packages",
+      "projectPath": "C:\\Users\\asus\\public\\_mnpbem_repo\\csharp-mnp-plasmon\\MnpPlasmon\\MnpPlasmon.csproj",
+      "filePath": "C:\\Users\\asus\\public\\_mnpbem_repo\\csharp-mnp-plasmon\\MnpPlasmon\\MnpPlasmon.csproj",
+      "libraryId": "Microsoft.NETCore.App.Ref",
+      "targetGraphs": [
+        "net6.0"
+      ]
+    },
+    {
+      "code": "NU1101",
+      "level": "Error",
+      "message": "Unable to find package Microsoft.WindowsDesktop.App.Ref. No packages exist with this id in source(s): C:\\Program Files\\dotnet\\library-packs, Microsoft Visual Studio Offline Packages",
+      "projectPath": "C:\\Users\\asus\\public\\_mnpbem_repo\\csharp-mnp-plasmon\\MnpPlasmon\\MnpPlasmon.csproj",
+      "filePath": "C:\\Users\\asus\\public\\_mnpbem_repo\\csharp-mnp-plasmon\\MnpPlasmon\\MnpPlasmon.csproj",
+      "libraryId": "Microsoft.WindowsDesktop.App.Ref",
+      "targetGraphs": [
+        "net6.0"
+      ]
+    },
+    {
+      "code": "NU1101",
+      "level": "Error",
+      "message": "Unable to find package Microsoft.AspNetCore.App.Ref. No packages exist with this id in source(s): C:\\Program Files\\dotnet\\library-packs, Microsoft Visual Studio Offline Packages",
+      "projectPath": "C:\\Users\\asus\\public\\_mnpbem_repo\\csharp-mnp-plasmon\\MnpPlasmon\\MnpPlasmon.csproj",
+      "filePath": "C:\\Users\\asus\\public\\_mnpbem_repo\\csharp-mnp-plasmon\\MnpPlasmon\\MnpPlasmon.csproj",
+      "libraryId": "Microsoft.AspNetCore.App.Ref",
+      "targetGraphs": [
+        "net6.0"
+      ]
+    }
+  ]
+}

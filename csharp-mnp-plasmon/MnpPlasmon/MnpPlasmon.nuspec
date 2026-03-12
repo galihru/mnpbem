@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+    <metadata>
+        <id>MnpPlasmon</id>
+        <version>0.1.0</version>
+        <title>MNP Plasmon - Metallic Nanoparticle Optical Response</title>
+        <authors>galihru</authors>
+        <owners>galihru</owners>
+        <license type="expression">GPL-3.0-only</license>
+        <projectUrl>https://github.com/galihru/mnpbem</projectUrl>
+        <repository type="git" url="https://github.com/galihru/mnpbem" />
+        <description>Efficient .NET library for calculating optical response of metallic nanoparticles using Drude model and Rayleigh approximation. Supports Au, Ag, Al materials.</description>
+        <summary>Calculate optical properties of metallic nanoparticles</summary>
+        <releaseNotes>
+Initial release v0.1.0
+- Drude model implementation
+- Rayleigh polarizability calculations
+- Cross-section computations (extinction, scattering, absorption)
+- Material database (Au, Ag, Al)
+- High-level unified API
+- Comprehensive unit tests
+        </releaseNotes>
+        <tags>plasmon;nanoparticles;optics;drude;rayleigh;photonics;physics</tags>
+        <language>en-US</language>
+        <requireLicenseAcceptance>true</requireLicenseAcceptance>
+        <dependencies>
+            <group targetFramework="net6.0">
+            </group>
+        </dependencies>
+    </metadata>
+    <files>
+        <file src="bin/Release/net6.0/MnpPlasmon.dll" target="lib/net6.0" />
+        <file src="bin/Release/net6.0/MnpPlasmon.xml" target="lib/net6.0" />
+        <file src="README.md" target="" />
+        <file src="LICENSE" target="" />
+    </files>
+</package>

@@ -198,7 +198,7 @@ jobs:
           CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_TOKEN }}
         run: |
           cd rust-mnp-plasmon
-          cargo publish
+          cargo publish --allow-dirty
 
   summary:
     needs: [publish-npm, publish-python, publish-nuget, publish-rust]

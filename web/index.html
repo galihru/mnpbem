@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nanoparticle Plasmon Visualizer</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #0a0a0f;
+    color: #ccc;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ---- Header ---- */
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    height: 48px;
+    background: #12121a;
+    border-bottom: 1px solid #1e1e2e;
+    flex-shrink: 0;
+    z-index: 10;
+  }
+  .header-title {
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    color: #e0d5c5;
+    text-transform: uppercase;
+  }
+  .header-actions {
+    display: flex;
+    gap: 6px;
+  }
+  .action-btn {
+    background: #1e1e2e;
+    border: 1px solid #2e2e44;
+    border-radius: 6px;
+    color: #aaa;
+    cursor: pointer;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+    font-size: 13px;
+  }
+  .action-btn:hover { background: #2a2a3e; color: #fff; border-color: #5a4a30; }
+  .action-btn.active { background: #3a2e1a; color: #d4a855; border-color: #d4a855; }
+
+  /* ---- Main layout ---- */
+  .main {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* ---- Controls panel ---- */
+  .controls {
+    width: 210px;
+    background: rgba(12,12,20,0.92);
+    border-right: 1px solid #1e1e2e;
+    padding: 18px 14px;
+    overflow-y: auto;
+    flex-shrink: 0;
+    z-index: 5;
+  }
+  .ctrl-section { margin-bottom: 20px; }
+  .ctrl-section h3 {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: #e0d5c5;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid #2a2a3a;
+  }
+  .ctrl-row { margin-bottom: 14px; }
+  .ctrl-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: #999;
+    margin-bottom: 5px;
+  }
+  .ctrl-label span:last-child { color: #e0d5c5; font-weight: 600; }
+  input[type=range] {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 3px;
+    background: #2a2a3a;
+    border-radius: 2px;
+    outline: none;
+  }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 14px; height: 14px;
+    background: radial-gradient(circle, #d4a855, #8a6020);
+    border-radius: 50%;
+    cursor: pointer;
+    border: 1px solid #f0c060;
+    box-shadow: 0 0 6px rgba(212,168,85,0.5);
+  }
+  select {
+    width: 100%;
+    background: #1a1a28;
+    border: 1px solid #2e2e44;
+    color: #e0d5c5;
+    padding: 5px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    outline: none;
+    cursor: pointer;
+  }
+  select:focus { border-color: #d4a855; }
+  .hr { border: none; border-top: 1px solid #2a2a3a; margin: 8px 0 16px; }
+
+  /* Spectrum bar */
+  .spectrum-bar {
+    position: absolute;
+    bottom: 18px;
+    left: 230px;
+    right: 20px;
+    height: 70px;
+    background: rgba(10,10,18,0.85);
+    border: 1px solid #1e1e2e;
+    border-radius: 8px;
+    padding: 8px 12px 6px;
+    z-index: 5;
+    pointer-events: none;
+  }
+  .spectrum-label {
+    font-size: 10px;
+    color: #666;
+    margin-bottom: 3px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  canvas#spectrum {
+    width: 100%;
+    height: 38px;
+    display: block;
+    border-radius: 4px;
+  }
+
+  /* ---- Canvas ---- */
+  #glCanvas {
+    flex: 1;
+    display: block;
+    cursor: grab;
+  }
+  #glCanvas:active { cursor: grabbing; }
+
+  /* ---- Source code panel ---- */
+  .src-panel {
+    position: absolute;
+    top: 0; right: 0;
+    width: 0;
+    height: 100%;
+    background: #0d0d18;
+    border-left: 1px solid #1e1e2e;
+    overflow: hidden;
+    z-index: 20;
+    transition: width 0.28s cubic-bezier(.4,0,.2,1);
+    display: flex;
+  }
+  .src-panel.open { width: 580px; }
+
+  .src-code {
+    width: 320px;
+    flex-shrink: 0;
+    overflow-y: auto;
+    padding: 20px 16px;
+    font-size: 11.5px;
+    line-height: 1.7;
+    border-right: 1px solid #1e1e2e;
+  }
+  .src-annotation {
+    flex: 1;
+    padding: 20px 16px;
+    overflow-y: auto;
+  }
+  .annotation-empty {
+    color: #444;
+    font-size: 12px;
+    margin-top: 40px;
+    text-align: center;
+  }
+  .annotation-box {
+    display: none;
+    background: #13131f;
+    border: 1px solid #2e2e44;
+    border-left: 3px solid #d4a855;
+    border-radius: 6px;
+    padding: 14px;
+  }
+  .annotation-box.visible { display: block; }
+  .annotation-box h4 {
+    color: #d4a855;
+    font-size: 12px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    letter-spacing: 0.06em;
+  }
+  .annotation-box p {
+    font-size: 11.5px;
+    color: #bbb;
+    line-height: 1.65;
+    margin-bottom: 8px;
+  }
+  .annotation-box .formula {
+    background: #0a0a14;
+    border: 1px solid #2a2a3a;
+    border-radius: 4px;
+    padding: 8px 10px;
+    font-family: 'Consolas', monospace;
+    font-size: 11px;
+    color: #a8d4a8;
+    margin-top: 8px;
+  }
+
+  /* Syntax highlighting */
+  .src-code pre { white-space: pre-wrap; word-break: break-word; }
+  .tok-kw  { color: #c792ea; }
+  .tok-fn  { color: #82aaff; }
+  .tok-str { color: #c3e88d; }
+  .tok-num { color: #f78c6c; }
+  .tok-cmt { color: #546e7a; font-style: italic; }
+  .tok-prop{ color: #ffcb6b; }
+  .tok-op  { color: #89ddff; }
+
+  code-block {
+    display: block;
+    padding: 3px 6px;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: background 0.12s;
+  }
+  code-block:hover { background: rgba(212,168,85,0.08); }
+  code-block.highlighted { background: rgba(212,168,85,0.12); }
+  .line-num {
+    color: #333;
+    user-select: none;
+    display: inline-block;
+    width: 26px;
+    text-align: right;
+    margin-right: 10px;
+    font-size: 10px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-title">Nanoparticle Plasmon Visualizer</div>
+  <div class="header-actions">
+    <button class="action-btn" id="btnSrc" title="Source code">
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6">
+        <polyline points="5,4 1,8 5,12"/><polyline points="11,4 15,8 11,12"/>
+      </svg>
+    </button>
+    <button class="action-btn" id="btnCopy" title="Copy code">
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6">
+        <rect x="5" y="5" width="9" height="9" rx="1"/><path d="M3 11V3a1 1 0 011-1h8"/>
+      </svg>
+    </button>
+    <button class="action-btn" id="btnDl" title="Download HTML">
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6">
+        <path d="M8 2v8m0 0l-3-3m3 3l3-3M2 13h12"/>
+      </svg>
+    </button>
+  </div>
+</header>
+
+<div class="main">
+  <!-- Controls -->
+  <div class="controls">
+    <div class="ctrl-section">
+      <h3>Particle</h3>
+
+      <div class="ctrl-row">
+        <div class="ctrl-label"><span>Radius (nm)</span><span id="valR">20</span></div>
+        <input type="range" id="slR" min="5" max="80" step="1" value="20">
+      </div>
+
+      <div class="ctrl-row">
+        <div class="ctrl-label"><span>Material</span></div>
+        <select id="selMat">
+          <option value="Au">Gold (Au)</option>
+          <option value="Ag">Silver (Ag)</option>
+          <option value="Al">Aluminum (Al)</option>
+        </select>
+      </div>
+
+      <div class="ctrl-row">
+        <div class="ctrl-label"><span>Medium n</span><span id="valN">1.33</span></div>
+        <input type="range" id="slN" min="1.0" max="2.5" step="0.01" value="1.33">
+      </div>
+    </div>
+
+    <div class="hr"></div>
+
+    <div class="ctrl-section">
+      <h3>Excitation</h3>
+      <div class="ctrl-row">
+        <div class="ctrl-label"><span>&#955; (nm)</span><span id="valWL">550</span></div>
+        <input type="range" id="slWL" min="350" max="900" step="5" value="550">
+      </div>
+      <div class="ctrl-row">
+        <div class="ctrl-label"><span>Color Scale</span><span id="valCS">1.0</span></div>
+        <input type="range" id="slCS" min="0.2" max="5" step="0.1" value="1.0">
+      </div>
+    </div>
+
+    <div class="hr"></div>
+
+    <div class="ctrl-section">
+      <h3>Clipping</h3>
+      <div class="ctrl-row">
+        <div class="ctrl-label"><span>X Clip</span><span id="valCX">0</span></div>
+        <input type="range" id="slCX" min="-1" max="1" step="0.05" value="0">
+      </div>
+      <div class="ctrl-row">
+        <div class="ctrl-label"><span>Y Clip</span><span id="valCY">0</span></div>
+        <input type="range" id="slCY" min="-1" max="1" step="0.05" value="0">
+      </div>
+      <div class="ctrl-row">
+        <div class="ctrl-label"><span>Z Clip</span><span id="valCZ">0</span></div>
+        <input type="range" id="slCZ" min="-1" max="1" step="0.05" value="0">
+      </div>
+    </div>
+  </div>
+
+  <!-- WebGL Canvas -->
+  <canvas id="glCanvas"></canvas>
+
+  <!-- Spectrum bar -->
+  <div class="spectrum-bar">
+    <div class="spectrum-label">Extinction cross-section spectrum &mdash; <span id="specInfo">loading…</span></div>
+    <canvas id="spectrum"></canvas>
+  </div>
+
+  <!-- Source code panel -->
+  <div class="src-panel" id="srcPanel">
+    <div class="src-code" id="srcCode"></div>
+    <div class="src-annotation" id="srcAnnotation">
+      <div class="annotation-empty">Hover over a code block<br>to see an explanation.</div>
+      <!-- Annotation templates (hidden, shown by JS) -->
+      <div class="annotation-box" id="ann-imports">
+        <h4>Module Imports</h4>
+        <p>This visualization imports directly from the <strong>@galihru/mnp</strong> npm package, which bundles both the material dielectric model and the Mie/Rayleigh scattering module.</p>
+        <p>The package is loaded from <strong>unpkg CDN</strong> using the browser-native ES Module import map.</p>
+      </div>
+      <div class="annotation-box" id="ann-drude">
+        <h4>Drude Dielectric Function</h4>
+        <p>The complex dielectric function &epsilon;(&omega;) of the metal is computed using the Drude free-electron model:</p>
+        <div class="formula">&epsilon;(&omega;) = &epsilon;&#8734; &minus; &omega;&#8346;&#178; / [&omega;(&omega; + i&gamma;)]</div>
+        <p>where &omega;&#8346; is the plasma frequency and &gamma; is the damping constant. Both are material-specific constants stored in the built-in table (Au, Ag, Al).</p>
+      </div>
+      <div class="annotation-box" id="ann-polar">
+        <h4>Quasi-Static Polarizability</h4>
+        <p>In the Rayleigh (quasi-static) limit, the complex polarizability of a sphere of radius R is:</p>
+        <div class="formula">&alpha; = 4&pi;R&#179; (&epsilon; &minus; &epsilon;&#8346;) / (&epsilon; + 2&epsilon;&#8346;)</div>
+        <p>The denominator <em>&epsilon; + 2&epsilon;&#8346;</em> reaches a minimum (resonance) when Re(&epsilon;) = &minus;2&epsilon;&#8346;, giving the Fröhlich condition for LSPR.</p>
+      </div>
+      <div class="annotation-box" id="ann-cross">
+        <h4>Electromagnetic Cross Sections</h4>
+        <p>The three physical observables are computed from the polarizability &alpha; and wavenumber k:</p>
+        <div class="formula">C&#8336;&#8331;&#8348; = k &middot; Im(&alpha;) <br>C&#8347;&#8346;&#8344; = k&#8308;|&alpha;|&#178; / (6&pi;) <br>C&#8336;&#8331;&#8347; = C&#8336;&#8331;&#8348; &minus; C&#8347;&#8346;&#8344;</div>
+        <p>These have units of nm&sup2;. The spectrum peak wavelength shifts with particle size and surrounding medium — the basis of plasmonic sensing.</p>
+      </div>
+      <div class="annotation-box" id="ann-cdf">
+        <h4>CDF Sampling — Near-Field Cloud</h4>
+        <p>Particle positions in the 3D cloud are sampled from the <strong>near-field intensity distribution</strong> of a point dipole:</p>
+        <div class="formula">|E|&#178;(r,&theta;) &prop; |&alpha;|&#178; (1 + 3cos&#178;&theta;) / r&#8310;</div>
+        <p>The radial CDF inverts the r&#8315;&#8308; probability density analytically. The angular weighting uses rejection sampling on the factor (1 + 3cos&#178;&theta;) / 4.</p>
+        <div class="formula">r = R / (1 &minus; u)^(1/3) &nbsp; [radial inverse-CDF]</div>
+      </div>
+      <div class="annotation-box" id="ann-webgl">
+        <h4>WebGL Point Cloud Rendering</h4>
+        <p>Each sampled point is a GL_POINT rendered as a soft glowing disc via the fragment shader. Additive blending accumulates overlapping points to create the glowing cloud effect.</p>
+        <p>The <strong>hot colormap</strong> maps intensity linearly through: black → purple → red → orange → yellow → white, matching the thermal radiation spectrum.</p>
+      </div>
+      <div class="annotation-box" id="ann-wireframe">
+        <h4>Wireframe Bounding Sphere</h4>
+        <p>A low-polygon wireframe sphere (icosphere subdivided once) frames the near-field extent, showing the region where field enhancement exceeds the background.</p>
+        <p>The sphere radius matches the visualization cutoff at 5&times; the particle radius.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="importmap">
+{
+  "imports": {
+    "@galihru/mnp": "https://unpkg.com/@galihru/mnp@0.1.4/src/index.js",
+    "@galihru/mnp-material": "https://unpkg.com/@galihru/mnp-material@0.1.4/src/index.js",
+    "@galihru/mnp-mie": "https://unpkg.com/@galihru/mnp-mie@0.1.4/src/index.js"
+  }
+}
+</script>
+
+<script type="module">
+// ============================================================
+// [IMPORTS] Load plasmonic modules from @galihru/mnp
+// ============================================================
+import {
+  drudeEpsilon, constantEpsilon,
+  rayleighPolarizability, rayleighCrossSections,
+  simulateSphereResponse
+} from "@galihru/mnp";
+
+// ============================================================
+// [DRUDE] Compute complex dielectric function for the metal
+// drudeEpsilon(material, wavelengthNm) → { re, im }
+// ============================================================
+function getEpsilon(material, wl) {
+  return drudeEpsilon(material, wl);
+}
+
+// ============================================================
+// [POLARIZABILITY] Quasi-static polarizability of the sphere
+// α = 4πR³ (ε − ε_m) / (ε + 2ε_m)
+// ============================================================
+function getPolarizability(wl, R, material, n_med) {
+  const eps = drudeEpsilon(material, wl);
+  const epsM = constantEpsilon(n_med * n_med, wl);
+  return rayleighPolarizability(R, eps, epsM);
+}
+
+// ============================================================
+// [CROSS SECTIONS] cExt, cSca, cAbs from Rayleigh formula
+// returned in nm²
+// ============================================================
+function getSpectrum(material, R, n_med, wlArray) {
+  return wlArray.map(wl => {
+    const eps  = drudeEpsilon(material, wl);
+    const epsM = constantEpsilon(n_med * n_med, wl);
+    return rayleighCrossSections(wl, R, eps, epsM);
+  });
+}
+
+// ============================================================
+// [CDF SAMPLING] Near-field dipole intensity point cloud
+// P(r,θ) ∝ |α|² (1 + 3cos²θ) / r⁴ (volume element included)
+// Radial inverse-CDF: r = R_min / (1 - u)^(1/3)
+// Angular rejection sampling with P_max = 4
+// ============================================================
+function sampleNearField(alpha, R, N, colorScale) {
+  const alphaMag2 = alpha.re * alpha.re + alpha.im * alpha.im;
+  const rMin = R;
+  const rMax = 5.2 * R;
+
+  const pos   = new Float32Array(N * 3);
+  const intens = new Float32Array(N);
+  let idx = 0;
+  const attempts = N * 6;
+
+  for (let i = 0; i < attempts && idx < N; i++) {
+    // Radial CDF sampling: P(r) ∝ 1/r⁴
+    const u = Math.random();
+    const r = rMin / Math.cbrt(1 - u * (1 - Math.pow(rMin / rMax, 3)));
+    if (r > rMax) continue;
+
+    // Angular rejection sampling for (1 + 3cos²θ)/4
+    const cosT = 2 * Math.random() - 1;
+    const w = (1 + 3 * cosT * cosT) / 4;
+    if (Math.random() > w) continue;
+
+    const sinT = Math.sqrt(Math.max(0, 1 - cosT * cosT));
+    const phi  = 2 * Math.PI * Math.random();
+
+    pos[idx * 3]     = r * sinT * Math.cos(phi);
+    pos[idx * 3 + 1] = r * sinT * Math.sin(phi);
+    pos[idx * 3 + 2] = r * cosT;
+
+    // Intensity = |α|²/r⁶ · (1+3cos²θ), normalize to [0,1]
+    // Peak at r=R, cosθ=1: fieldSq_peak = alphaMag2 * 4
+    // Normalize so peak = colorScale (clamped to 1)
+    const fieldSq = alphaMag2 * (1 + 3 * cosT * cosT) / Math.pow(r / R, 6);
+    const peakFieldSq = alphaMag2 * 4.0;
+    intens[idx] = Math.min(1.0, (fieldSq / peakFieldSq) * colorScale);
+    idx++;
+  }
+
+  return { pos: pos.slice(0, idx * 3), intens: intens.slice(0, idx) };
+}
+
+// ============================================================
+// [WEBGL] GPU-accelerated point cloud + wireframe rendering
+// Additive blending for the glowing hot-colormap effect
+// ============================================================
+const canvas = document.getElementById("glCanvas");
+const gl = canvas.getContext("webgl", { antialias: false, alpha: false });
+
+// --- Vertex shader ----------------------------------------
+// uClip: positive value = clip away points beyond +clip on that axis
+//        negative value = clip away points beyond -clip on that axis  
+//        zero = no clipping on that axis
+const VS = `
+  attribute vec3 aPos;
+  attribute float aIntens;
+  uniform mat4 uMVP;
+  uniform float uPointSize;
+  varying float vIntens;
+  uniform vec3 uClip;
+  void main() {
+    bool clipped =
+      (uClip.x > 0.001 && aPos.x > uClip.x) ||
+      (uClip.x < -0.001 && aPos.x < uClip.x) ||
+      (uClip.y > 0.001 && aPos.y > uClip.y) ||
+      (uClip.y < -0.001 && aPos.y < uClip.y) ||
+      (uClip.z > 0.001 && aPos.z > uClip.z) ||
+      (uClip.z < -0.001 && aPos.z < uClip.z);
+    if (clipped) {
+      gl_Position = vec4(2.0, 2.0, 2.0, 1.0);
+      gl_PointSize = 0.0;
+      vIntens = 0.0;
+    } else {
+      gl_Position = uMVP * vec4(aPos, 1.0);
+      float dist = gl_Position.z / gl_Position.w;
+      gl_PointSize = max(1.0, uPointSize * (1.5 - dist * 0.4));
+      vIntens = aIntens;
+    }
+  }`;
+
+// -- Fragment shader: hot colormap + soft disc -------------
+const FS = `
+  precision mediump float;
+  varying float vIntens;
+  void main() {
+    vec2 uv = gl_PointCoord - 0.5;
+    float r = dot(uv, uv) * 4.0;
+    if (r > 1.0) discard;
+    float alpha = (1.0 - r) * vIntens * 0.9;
+    // Hot colormap: black→purple→red→orange→yellow→white
+    float t = vIntens;
+    vec3 c;
+    if (t < 0.25)      c = mix(vec3(0,0,0),    vec3(0.5,0,0.7), t*4.0);
+    else if (t < 0.5)  c = mix(vec3(0.5,0,0.7),vec3(0.9,0.1,0),(t-0.25)*4.0);
+    else if (t < 0.75) c = mix(vec3(0.9,0.1,0),vec3(1,0.7,0),  (t-0.5)*4.0);
+    else               c = mix(vec3(1,0.7,0),  vec3(1,1,1),    (t-0.75)*4.0);
+    gl_FragColor = vec4(c * alpha, alpha);
+  }`;
+
+// -- Wireframe shaders ------------------------------------
+const VS_WIRE = `
+  attribute vec3 aPos;
+  uniform mat4 uMVP;
+  void main() { gl_Position = uMVP * vec4(aPos, 1.0); }`;
+const FS_WIRE = `
+  precision mediump float;
+  void main() { gl_FragColor = vec4(0.9,0.9,0.9,0.2); }`;
+
+function compileShader(src, type) {
+  const s = gl.createShader(type);
+  gl.shaderSource(s, src);
+  gl.compileShader(s);
+  return s;
+}
+function makeProgram(vs, fs) {
+  const p = gl.createProgram();
+  gl.attachShader(p, compileShader(vs, gl.VERTEX_SHADER));
+  gl.attachShader(p, compileShader(fs, gl.FRAGMENT_SHADER));
+  gl.linkProgram(p);
+  return p;
+}
+
+const prog  = makeProgram(VS, FS);
+const progW = makeProgram(VS_WIRE, FS_WIRE);
+
+// Build a UV-sphere wireframe (longitude/latitude lines)
+function buildSphereWireframe(radius, segs) {
+  const verts = [];
+  // Longitude lines
+  for (let i = 0; i < segs; i++) {
+    const phi = (i / segs) * 2 * Math.PI;
+    for (let j = 0; j < segs; j++) {
+      const t0 = ((j    ) / segs) * Math.PI;
+      const t1 = ((j + 1) / segs) * Math.PI;
+      verts.push(
+        radius * Math.sin(t0) * Math.cos(phi), radius * Math.cos(t0), radius * Math.sin(t0) * Math.sin(phi),
+        radius * Math.sin(t1) * Math.cos(phi), radius * Math.cos(t1), radius * Math.sin(t1) * Math.sin(phi)
+      );
+    }
+  }
+  // Latitude lines (5 rings)
+  for (let j = 1; j < 5; j++) {
+    const theta = (j / 5) * Math.PI;
+    const y = radius * Math.cos(theta);
+    const rr = radius * Math.sin(theta);
+    for (let i = 0; i < segs; i++) {
+      const p0 = (i / segs) * 2 * Math.PI;
+      const p1 = ((i + 1) / segs) * 2 * Math.PI;
+      verts.push(
+        rr * Math.cos(p0), y, rr * Math.sin(p0),
+        rr * Math.cos(p1), y, rr * Math.sin(p1)
+      );
+    }
+  }
+  return new Float32Array(verts);
+}
+
+// WebGL buffers
+const posBuf    = gl.createBuffer();
+const intensBuf = gl.createBuffer();
+const wireBuf   = gl.createBuffer();
+
+// ============================================================
+// [WIREFRAME] Build the bounding sphere geometry
+// ============================================================
+let wireCount = 0;
+function uploadWireframe(R) {
+  const data = buildSphereWireframe(R * 5.2, 24);
+  wireCount = data.length / 3;
+  gl.bindBuffer(gl.ARRAY_BUFFER, wireBuf);
+  gl.bufferData(gl.ARRAY_BUFFER, data, gl.DYNAMIC_DRAW);
+}
+
+// Camera state
+let rotX = 0.35, rotY = 0.55;
+let dragging = false, lastX = 0, lastY = 0;
+canvas.addEventListener("mousedown", e => { dragging = true; lastX = e.clientX; lastY = e.clientY; });
+window.addEventListener("mouseup",   () => { dragging = false; });
+window.addEventListener("mousemove", e => {
+  if (!dragging) return;
+  rotY += (e.clientX - lastX) * 0.006;
+  rotX += (e.clientY - lastY) * 0.006;
+  lastX = e.clientX; lastY = e.clientY;
+  render();
+});
+
+// Resize handler
+function resize() {
+  const rect = canvas.getBoundingClientRect();
+  canvas.width  = rect.width  * devicePixelRatio;
+  canvas.height = rect.height * devicePixelRatio;
+  gl.viewport(0, 0, canvas.width, canvas.height);
+}
+window.addEventListener("resize", () => { resize(); render(); });
+
+// Matrix helpers — all column-major (WebGL convention)
+// C = A * B:  C[col*4+row] = Σk A[k*4+row] * B[col*4+k]
+function mat4Mul(a, b) {
+  const r = new Float32Array(16);
+  for (let col = 0; col < 4; col++)
+    for (let row = 0; row < 4; row++)
+      for (let k = 0; k < 4; k++)
+        r[col*4+row] += a[k*4+row] * b[col*4+k];
+  return r;
+}
+function perspective(fov, asp, near, far) {
+  const f = 1 / Math.tan(fov / 2);
+  const m = new Float32Array(16);
+  m[0]  = f / asp;  // col0,row0
+  m[5]  = f;        // col1,row1
+  m[10] = (far + near) / (near - far); // col2,row2
+  m[14] = (2 * far * near) / (near - far); // col3,row2
+  m[11] = -1;       // col2,row3
+  return m;
+}
+function rotateXY(rx, ry) {
+  const cx = Math.cos(rx), sx = Math.sin(rx);
+  const cy = Math.cos(ry), sy = Math.sin(ry);
+  // Column-major storage: [col0_r0,col0_r1,col0_r2,col0_r3, col1_r0,...]
+  const Rx = new Float32Array([1,0,0,0,  0,cx,sx,0,  0,-sx,cx,0,  0,0,0,1]);
+  const Ry = new Float32Array([cy,0,-sy,0,  0,1,0,0,  sy,0,cy,0,  0,0,0,1]);
+  return mat4Mul(Ry, Rx);
+}
+function translate(m, tx, ty, tz) {
+  // col3 = [tx,ty,tz,1]
+  const t = new Float32Array([1,0,0,0,  0,1,0,0,  0,0,1,0,  tx,ty,tz,1]);
+  return mat4Mul(t, m);
+}
+
+// State
+let pointCount = 0;
+let currentR   = 20;
+let clipPlane  = [0, 0, 0];
+let colorScale = 1.0;
+
+function rebuild() {
+  const R   = parseFloat(document.getElementById("slR").value);
+  const mat = document.getElementById("selMat").value;
+  const n   = parseFloat(document.getElementById("slN").value);
+  const wl  = parseFloat(document.getElementById("slWL").value);
+  colorScale = parseFloat(document.getElementById("slCS").value);
+  clipPlane  = [
+    parseFloat(document.getElementById("slCX").value) * R * 5,
+    parseFloat(document.getElementById("slCY").value) * R * 5,
+    parseFloat(document.getElementById("slCZ").value) * R * 5
+  ];
+  currentR = R;
+
+  // Get physics from module
+  const eps  = drudeEpsilon(mat, wl);
+  const epsM = constantEpsilon(n * n, wl);
+  const alpha = rayleighPolarizability(R, eps, epsM);
+
+  // Sample near-field cloud
+  const N = 60000;
+  const { pos, intens } = sampleNearField(alpha, R, N, colorScale);
+  pointCount = intens.length;
+
+  gl.bindBuffer(gl.ARRAY_BUFFER, posBuf);
+  gl.bufferData(gl.ARRAY_BUFFER, pos, gl.DYNAMIC_DRAW);
+
+  gl.bindBuffer(gl.ARRAY_BUFFER, intensBuf);
+  gl.bufferData(gl.ARRAY_BUFFER, intens, gl.DYNAMIC_DRAW);
+
+  uploadWireframe(R);
+  updateSpectrum(mat, R, n);
+  render();
+}
+
+// ============================================================
+// [SPECTRUM] Draw cross-section curve at bottom
+// Scans λ = 350–900 nm, plots cExt as a filled curve
+// ============================================================
+function updateSpectrum(material, R, n_med) {
+  const sc = document.getElementById("spectrum");
+  const ctx = sc.getContext("2d");
+  sc.width  = sc.clientWidth  * devicePixelRatio;
+  sc.height = sc.clientHeight * devicePixelRatio;
+  const W = sc.width, H = sc.height;
+
+  const wls = [];
+  for (let w = 350; w <= 900; w += 5) wls.push(w);
+  const specs = getSpectrum(material, R, n_med, wls);
+  const maxExt = Math.max(...specs.map(s => s.cExt > 0 ? s.cExt : 0));
+
+  // Gradient fill
+  const grad = ctx.createLinearGradient(0, 0, W, 0);
+  const colors = ["#6e00ff","#4400ff","#0044ff","#00aaff","#00ff99","#aaff00","#ffdd00","#ff8800","#ff3300"];
+  colors.forEach((c, i) => grad.addColorStop(i / (colors.length - 1), c));
+
+  ctx.clearRect(0, 0, W, H);
+  ctx.beginPath();
+  ctx.moveTo(0, H);
+  specs.forEach((s, i) => {
+    const x = (i / (wls.length - 1)) * W;
+    const y = H - Math.max(0, s.cExt / maxExt) * H * 0.9;
+    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  });
+  ctx.lineTo(W, H);
+  ctx.closePath();
+  ctx.fillStyle = grad;
+  ctx.globalAlpha = 0.7;
+  ctx.fill();
+  ctx.globalAlpha = 1;
+
+  // Current wavelength marker
+  const wl = parseFloat(document.getElementById("slWL").value);
+  const xM = ((wl - 350) / 550) * W;
+  ctx.strokeStyle = "#fff";
+  ctx.lineWidth = 1.5 * devicePixelRatio;
+  ctx.beginPath();
+  ctx.moveTo(xM, 0); ctx.lineTo(xM, H);
+  ctx.stroke();
+
+  // Info label
+  const wlIdx = Math.round((wl - 350) / 5);
+  const s = specs[Math.min(wlIdx, specs.length - 1)];
+  document.getElementById("specInfo").textContent =
+    `C_ext = ${(s.cExt).toFixed(0)} nm²  |  C_sca = ${(s.cSca).toFixed(0)} nm²  |  C_abs = ${(s.cAbs).toFixed(0)} nm²  at λ = ${wl} nm`;
+}
+
+function render() {
+  resize();
+  gl.clearColor(0.04, 0.04, 0.07, 1);
+  gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+  gl.enable(gl.BLEND);
+  gl.blendFunc(gl.SRC_ALPHA, gl.ONE); // additive for glow
+  gl.disable(gl.DEPTH_TEST);
+
+  const asp = canvas.width / canvas.height;
+  const proj = perspective(0.9, asp, 0.1, 2000);
+  const view = translate(rotateXY(rotX, rotY), 0, 0, -currentR * 12);
+  const mvp  = mat4Mul(proj, view);
+
+  // Draw wireframe
+  gl.useProgram(progW);
+  gl.uniformMatrix4fv(gl.getUniformLocation(progW, "uMVP"), false, mvp);
+  gl.bindBuffer(gl.ARRAY_BUFFER, wireBuf);
+  const aW = gl.getAttribLocation(progW, "aPos");
+  gl.enableVertexAttribArray(aW);
+  gl.vertexAttribPointer(aW, 3, gl.FLOAT, false, 0, 0);
+  gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+  gl.drawArrays(gl.LINES, 0, wireCount);
+
+  // Draw point cloud
+  if (pointCount === 0) return;
+  gl.useProgram(prog);
+  gl.uniformMatrix4fv(gl.getUniformLocation(prog, "uMVP"), false, mvp);
+  gl.uniform1f(gl.getUniformLocation(prog, "uPointSize"), 3.5 * devicePixelRatio);
+  gl.uniform3fv(gl.getUniformLocation(prog, "uClip"), new Float32Array(clipPlane));
+
+  gl.bindBuffer(gl.ARRAY_BUFFER, posBuf);
+  const aPos = gl.getAttribLocation(prog, "aPos");
+  gl.enableVertexAttribArray(aPos);
+  gl.vertexAttribPointer(aPos, 3, gl.FLOAT, false, 0, 0);
+
+  gl.bindBuffer(gl.ARRAY_BUFFER, intensBuf);
+  const aInt = gl.getAttribLocation(prog, "aIntens");
+  gl.enableVertexAttribArray(aInt);
+  gl.vertexAttribPointer(aInt, 1, gl.FLOAT, false, 0, 0);
+
+  gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
+  gl.drawArrays(gl.POINTS, 0, pointCount);
+}
+
+// ---- Controls event listeners ----------------------------
+function connectSlider(id, valId, decimals, rebuild_fn) {
+  const sl = document.getElementById(id);
+  const vl = document.getElementById(valId);
+  sl.addEventListener("input", () => {
+    vl.textContent = parseFloat(sl.value).toFixed(decimals);
+    rebuild_fn();
+  });
+}
+connectSlider("slR",  "valR",  0, rebuild);
+connectSlider("slN",  "valN",  2, rebuild);
+connectSlider("slWL", "valWL", 0, rebuild);
+connectSlider("slCS", "valCS", 1, rebuild);
+connectSlider("slCX", "valCX", 2, () => {
+  clipPlane[0] = parseFloat(document.getElementById("slCX").value) * currentR * 5;
+  render();
+});
+connectSlider("slCY", "valCY", 2, () => {
+  clipPlane[1] = parseFloat(document.getElementById("slCY").value) * currentR * 5;
+  render();
+});
+connectSlider("slCZ", "valCZ", 2, () => {
+  clipPlane[2] = parseFloat(document.getElementById("slCZ").value) * currentR * 5;
+  render();
+});
+document.getElementById("selMat").addEventListener("change", rebuild);
+
+// ============================================================
+// [SOURCE CODE PANEL] Syntax-highlighted code with hover annot
+// ============================================================
+const srcLines = [
+  { t: "import", ann: "imports" },
+  { t: `<span class="tok-kw">import</span> {` },
+  { t: `  <span class="tok-prop">drudeEpsilon</span>, <span class="tok-prop">constantEpsilon</span>,` },
+  { t: `  <span class="tok-prop">rayleighPolarizability</span>, <span class="tok-prop">rayleighCrossSections</span>,` },
+  { t: `  <span class="tok-prop">simulateSphereResponse</span>` },
+  { t: `} <span class="tok-kw">from</span> <span class="tok-str">"@galihru/mnp"</span>;`, ann: "imports" },
+  { t: "" },
+  { t: `<span class="tok-cmt">// Drude complex dielectric function ε(ω)</span>` },
+  { t: `<span class="tok-kw">function</span> <span class="tok-fn">getEpsilon</span>(material, wl) {`, ann: "drude" },
+  { t: `  <span class="tok-kw">return</span> <span class="tok-fn">drudeEpsilon</span>(material, wl);`, ann: "drude" },
+  { t: `}`, ann: "drude" },
+  { t: "" },
+  { t: `<span class="tok-cmt">// Quasi-static polarizability  α = 4πR³(ε−εm)/(ε+2εm)</span>` },
+  { t: `<span class="tok-kw">function</span> <span class="tok-fn">getPolarizability</span>(wl, R, mat, n) {`, ann: "polar" },
+  { t: `  <span class="tok-kw">const</span> eps  = <span class="tok-fn">drudeEpsilon</span>(mat, wl);`, ann: "polar" },
+  { t: `  <span class="tok-kw">const</span> epsM = <span class="tok-fn">constantEpsilon</span>(n*n, wl);`, ann: "polar" },
+  { t: `  <span class="tok-kw">return</span> <span class="tok-fn">rayleighPolarizability</span>(R, eps, epsM);`, ann: "polar" },
+  { t: `}`, ann: "polar" },
+  { t: "" },
+  { t: `<span class="tok-cmt">// Cross sections: cExt, cSca, cAbs [nm²]</span>` },
+  { t: `<span class="tok-kw">function</span> <span class="tok-fn">getSpectrum</span>(mat, R, n, wlArray) {`, ann: "cross" },
+  { t: `  <span class="tok-kw">return</span> wlArray.<span class="tok-fn">map</span>(wl => {`, ann: "cross" },
+  { t: `    <span class="tok-kw">const</span> eps  = <span class="tok-fn">drudeEpsilon</span>(mat, wl);`, ann: "cross" },
+  { t: `    <span class="tok-kw">const</span> epsM = <span class="tok-fn">constantEpsilon</span>(n*n, wl);`, ann: "cross" },
+  { t: `    <span class="tok-kw">return</span> <span class="tok-fn">rayleighCrossSections</span>(wl, R, eps, epsM);`, ann: "cross" },
+  { t: `  });`, ann: "cross" },
+  { t: `}`, ann: "cross" },
+  { t: "" },
+  { t: `<span class="tok-cmt">// CDF sampling: near-field dipole intensity cloud</span>` },
+  { t: `<span class="tok-cmt">// P(r,θ) ∝ |α|²(1+3cos²θ) / r⁴</span>` },
+  { t: `<span class="tok-kw">function</span> <span class="tok-fn">sampleNearField</span>(alpha, R, N, cs) {`, ann: "cdf" },
+  { t: `  <span class="tok-kw">const</span> aMag2 = alpha.re**<span class="tok-num">2</span> + alpha.im**<span class="tok-num">2</span>;`, ann: "cdf" },
+  { t: `  <span class="tok-kw">const</span> rMin = R, rMax = <span class="tok-num">5.2</span>*R;`, ann: "cdf" },
+  { t: `  <span class="tok-kw">for</span> (<span class="tok-kw">let</span> i = <span class="tok-num">0</span>; i < attempts; i++) {`, ann: "cdf" },
+  { t: `    <span class="tok-cmt">// Radial inverse-CDF: r = rMin/(1−u)^(1/3)</span>`, ann: "cdf" },
+  { t: `    <span class="tok-kw">const</span> r = rMin / Math.<span class="tok-fn">cbrt</span>(<span class="tok-num">1</span> - u * (<span class="tok-num">1</span> - (rMin/rMax)**<span class="tok-num">3</span>));`, ann: "cdf" },
+  { t: `    <span class="tok-cmt">// Angular rejection: accept with (1+3cos²θ)/4</span>`, ann: "cdf" },
+  { t: `    <span class="tok-kw">const</span> w = (<span class="tok-num">1</span> + <span class="tok-num">3</span>*cosT*cosT) / <span class="tok-num">4</span>;`, ann: "cdf" },
+  { t: `    <span class="tok-kw">if</span> (Math.<span class="tok-fn">random</span>() > w) <span class="tok-kw">continue</span>;`, ann: "cdf" },
+  { t: `  }`, ann: "cdf" },
+  { t: `}`, ann: "cdf" },
+  { t: "" },
+  { t: `<span class="tok-cmt">// WebGL: additive blending point cloud (hot colormap)</span>` },
+  { t: `<span class="tok-kw">const</span> gl = canvas.<span class="tok-fn">getContext</span>(<span class="tok-str">"webgl"</span>);`, ann: "webgl" },
+  { t: `gl.<span class="tok-fn">blendFunc</span>(gl.SRC_ALPHA, gl.ONE); <span class="tok-cmt">// additive</span>`, ann: "webgl" },
+  { t: `gl.<span class="tok-fn">drawArrays</span>(gl.POINTS, <span class="tok-num">0</span>, pointCount);`, ann: "webgl" },
+  { t: "" },
+  { t: `<span class="tok-cmt">// Wireframe bounding sphere (longitude/latitude lines)</span>` },
+  { t: `<span class="tok-kw">function</span> <span class="tok-fn">buildSphereWireframe</span>(radius, segs) {`, ann: "wireframe" },
+  { t: `  <span class="tok-cmt">// Longitude + 5 latitude rings at 5.2×R</span>`, ann: "wireframe" },
+  { t: `  gl.<span class="tok-fn">drawArrays</span>(gl.LINES, <span class="tok-num">0</span>, wireCount);`, ann: "wireframe" },
+  { t: `}`, ann: "wireframe" },
+];
+
+function buildSourcePanel() {
+  const container = document.getElementById("srcCode");
+  let html = '<pre>';
+  srcLines.forEach((line, i) => {
+    const ann  = line.ann  ? `data-ann="${line.ann}"` : "";
+    const cls  = line.ann  ? "code-block" : "";
+    const num  = `<span class="line-num">${(i + 1).toString().padStart(2)}</span>`;
+    html += `<code-block ${ann} class="${cls}">${num}${line.t || "&nbsp;"}</code-block>`;
+  });
+  html += '</pre>';
+  container.innerHTML = html;
+
+  // Hover listeners on annotated blocks
+  container.querySelectorAll("code-block[data-ann]").forEach(el => {
+    el.addEventListener("mouseenter", () => {
+      container.querySelectorAll("code-block").forEach(b => b.classList.remove("highlighted"));
+      const annId = el.dataset.ann;
+      container.querySelectorAll(`code-block[data-ann="${annId}"]`).forEach(b => b.classList.add("highlighted"));
+      document.querySelectorAll(".annotation-box").forEach(b => b.classList.remove("visible"));
+      document.querySelector(".annotation-empty").style.display = "none";
+      const box = document.getElementById("ann-" + annId);
+      if (box) box.classList.add("visible");
+    });
+  });
+  container.addEventListener("mouseleave", () => {
+    container.querySelectorAll("code-block").forEach(b => b.classList.remove("highlighted"));
+    document.querySelectorAll(".annotation-box").forEach(b => b.classList.remove("visible"));
+    document.querySelector(".annotation-empty").style.display = "";
+  });
+}
+
+buildSourcePanel();
+
+// ---- Panel toggle ----------------------------------------
+const panel = document.getElementById("srcPanel");
+document.getElementById("btnSrc").addEventListener("click", () => {
+  const open = panel.classList.toggle("open");
+  document.getElementById("btnSrc").classList.toggle("active", open);
+});
+
+// ---- Copy button -----------------------------------------
+document.getElementById("btnCopy").addEventListener("click", () => {
+  const raw = `import { drudeEpsilon, constantEpsilon, rayleighPolarizability, rayleighCrossSections, simulateSphereResponse } from "@galihru/mnp";\n\n// Example: Gold nanoparticle, R=20nm, water medium\nconst result = simulateSphereResponse({ material: "Au", wavelengthNm: 550, radiusNm: 20, mediumRefractiveIndex: 1.33 });\nconsole.log(result.crossSection);`;
+  navigator.clipboard.writeText(raw).then(() => {
+    const btn = document.getElementById("btnCopy");
+    btn.classList.add("active");
+    setTimeout(() => btn.classList.remove("active"), 1200);
+  });
+});
+
+// ---- Download button -------------------------------------
+document.getElementById("btnDl").addEventListener("click", () => {
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([document.documentElement.outerHTML], { type: "text/html" }));
+  a.download = "plasmon-visualizer.html";
+  a.click();
+});
+
+// ---- Initial build ---------------------------------------
+resize();
+rebuild();
+</script>
+</body>
+</html>

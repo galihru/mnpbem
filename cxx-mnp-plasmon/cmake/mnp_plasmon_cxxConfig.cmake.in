@@ -1,0 +1,5 @@
+@PACKAGE_INIT@
+
+include("${CMAKE_CURRENT_LIST_DIR}/mnp_plasmon_cxxTargets.cmake")
+
+check_required_components(mnp_plasmon_cxx)

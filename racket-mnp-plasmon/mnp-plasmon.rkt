@@ -4,26 +4,14 @@
          racket/math)
 
 (provide
-  (contract-out
-    [drude-epsilon (-> string? real? (values real? real?))]
-    [constant-epsilon (-> real? real? real?)]
-    [rayleigh-polarizability
-     (-> real?                    ; radius
-         (values real? real?)     ; eps_material
-         (values real? real?)     ; eps_medium
-         (values real? real?))]   ; alpha_real, alpha_imag
-    [rayleigh-cross-sections
-     (-> real?                    ; wavelength_nm
-         real?                    ; radius_nm
-         (values real? real?)     ; eps_particle
-         (values real? real?)     ; eps_medium
-         (values real? real? real?))])) ; cExt, cSca, cAbs
-
-(provide
-  ;; Material database
-  material-parameters  ; alist of (material-name . drude-params)
-  get-drude-params
-  material-list)
+ drude-epsilon
+ constant-epsilon
+ rayleigh-polarizability
+ rayleigh-cross-sections
+ simulate-sphere-response
+ material-parameters
+ get-drude-params
+ material-list)
 
 ;; ============================================================
 ;; [MATERIAL DATABASE] Drude parameters for Au, Ag, Al
@@ -185,37 +173,20 @@
    
    Outputs: (values c_ext c_sca c_abs) all in nm²"
   (let* ([n_medium (sqrt (car eps_medium))]    ; assume non-absorbing
-         [k (* 2 pi (/ n_medium wl_nm))]
-         [alpha_r alpha_i
-          (rayleigh-polarizability radius_nm eps_particle eps_medium)]
-         [alpha (list alpha_r alpha_i)]
-         [c_ext (* k (cadr alpha))]
-         [mag_sq (complex-mag-sq alpha)]
-         [c_sca (/ (* (expt k 4) mag_sq)
-                   (* 6 pi))]
-         [c_abs (- c_ext c_sca)])
+         [k (* 2 pi (/ n_medium wl_nm))])
+    (define-values (alpha_r alpha_i)
+      (rayleigh-polarizability radius_nm eps_particle eps_medium))
+    (define alpha (list alpha_r alpha_i))
+    (define c_ext (* k alpha_i))
+    (define mag_sq (complex-mag-sq alpha))
+    (define c_sca (/ (* (expt k 4) mag_sq)
+                     (* 6 pi)))
+    (define c_abs (- c_ext c_sca))
     (values c_ext c_sca c_abs)))
 
 ;; ============================================================
 ;; [HIGH-LEVEL API] Unified simulation function
 ;; ============================================================
-
-(provide
-  (contract-out
-    [simulate-sphere-response
-     (-> #:material string?
-         #:wavelength-nm real?
-         #:radius-nm real?
-         #:medium-n real?
-         (list/c (symbol/c 'material atom)
-                 (symbol/c 'wavelength-nm) real?
-                 (symbol/c 'radius-nm) real?
-                 (symbol/c 'medium-n) real?
-                 (symbol/c 'epsilon-particle) (list/c real? real?)
-                 (symbol/c 'polarizability) (list/c real? real?)
-                 (symbol/c 'c-ext) real?
-                 (symbol/c 'c-sca) real?
-                 (symbol/c 'c-abs) real?))]))
 
 (define (simulate-sphere-response
          #:material material
@@ -225,21 +196,21 @@
   "High-level API: compute full nanoparticle response.
    
    Returns: property list with all computed quantities"
-  (let* ([eps_p (drude-epsilon material wl_nm)]
-         [eps_m (list (constant-epsilon (* n_med n_med) wl_nm) 0)]
-         [alpha_vals (rayleigh-polarizability radius_nm
-                                              (list (car eps_p) (cadr eps_p))
-                                              eps_m)]
-         [cross_vals (rayleigh-cross-sections wl_nm radius_nm
-                                              (list (car eps_p) (cadr eps_p))
-                                              eps_m)])
-    (list
-      'material material
-      'wavelength-nm wl_nm
-      'radius-nm radius_nm
-      'medium-n n_med
-      'epsilon-particle (list (car eps_p) (cadr eps_p))
-      'polarizability (list (car alpha_vals) (cadr alpha_vals))
-      'c-ext (car cross_vals)
-      'c-sca (cadr cross_vals)
-      'c-abs (caddr cross_vals))))
+  (define-values (eps_r eps_i)
+    (drude-epsilon material wl_nm))
+  (define eps_p (list eps_r eps_i))
+  (define eps_m (list (constant-epsilon (* n_med n_med) wl_nm) 0))
+  (define-values (alpha_r alpha_i)
+    (rayleigh-polarizability radius_nm eps_p eps_m))
+  (define-values (c_ext c_sca c_abs)
+    (rayleigh-cross-sections wl_nm radius_nm eps_p eps_m))
+  (list
+   (list 'material material)
+   (list 'wavelength-nm wl_nm)
+   (list 'radius-nm radius_nm)
+   (list 'medium-n n_med)
+   (list 'epsilon-particle eps_p)
+   (list 'polarizability (list alpha_r alpha_i))
+   (list 'c-ext c_ext)
+   (list 'c-sca c_sca)
+   (list 'c-abs c_abs)))

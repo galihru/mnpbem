@@ -1,7 +1,10 @@
 #lang scribble/manual
 
 @require[scribble/example
-         (for-label racket/base racket/contract)]
+      (for-label racket/base racket/contract mnp-plasmon)]
+
+@(define eval-for-docs
+  (make-base-eval '(require mnp-plasmon)))
 
 @title{MNP Plasmon: Nanoparticle Electromagnetic Response}
 
@@ -67,7 +70,7 @@ Compute complex permittivity @math{ε(ω)} via the Drude free-electron model.
   @item{@bold{Returns}: @racket[(values real-part imag-part)]}
 ]
 
-@examples[
+@examples[#:eval eval-for-docs
   (drude-epsilon "Au" 550.0)
 ]
 }
@@ -124,7 +127,7 @@ Computes Drude permittivity, polarizability, and cross-sections in one call.
   @item{@racket[#:medium-n]: Refractive index of surrounding medium (default water: 1.33)}
 ]
 
-@bold{Returns:} Property list with keys:
+@bold{Returns:} Association list with keys:
 @itemlist[
   @item{@racket['material], @racket['wavelength-nm], @racket['radius-nm], @racket['medium-n]}
   @item{@racket['epsilon-particle]: @racket[(list real imag)]}
@@ -132,7 +135,7 @@ Computes Drude permittivity, polarizability, and cross-sections in one call.
   @item{@racket['c-ext], @racket['c-sca], @racket['c-abs]: cross-sections in nm²}
 ]
 
-@examples[
+@examples[#:eval eval-for-docs
   (simulate-sphere-response
     #:material "Au"
     #:wavelength-nm 550
@@ -167,3 +170,5 @@ Computes Drude permittivity, polarizability, and cross-sections in one call.
         Why gold nanoparticles are more precious than pretty gold.
         @italic{Chemical Society Reviews}, 35(3), 209–217.}
 ]
+
+@(close-eval eval-for-docs)

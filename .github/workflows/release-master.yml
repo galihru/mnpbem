@@ -1,0 +1,217 @@
+name: Master Release Orchestrator
+
+# Trigger on GitHubrelease creation or manual workflow dispatch
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version (e.g., 1.0.0)'
+        required: true
+      skip-npm:
+        description: 'Skip npm publish'
+        required: false
+        default: 'false'
+      skip-python:
+        description: 'Skip PyPI publish'
+        required: false
+        default: 'false'
+      skip-nuget:
+        description: 'Skip NuGet publish'
+        required: false
+        default: 'false'
+      skip-rust:
+        description: 'Skip Crates.io publish'
+        required: false
+        default: 'false'
+
+permissions:
+  contents: read
+  packages: write
+  id-token: write
+
+jobs:
+  parse-version:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.parse.outputs.version }}
+      npm-version: ${{ steps.parse.outputs.npm-version }}
+      python-version: ${{ steps.parse.outputs.python-version }}
+      nuget-version: ${{ steps.parse.outputs.nuget-version }}
+      rust-version: ${{ steps.parse.outputs.rust-version }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Parse version from release
+        id: parse
+        run: |
+          if [ "${{ github.event_name }}" == "release" ]; then
+            VERSION="${{ github.event.release.tag_name }}"
+            VERSION=${VERSION#v}
+          else
+            VERSION="${{ github.event.inputs.version }}"
+          fi
+          
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
+          echo "npm-version=${VERSION}" >> $GITHUB_OUTPUT
+          echo "python-version=${VERSION}" >> $GITHUB_OUTPUT
+          echo "nuget-version=${VERSION}" >> $GITHUB_OUTPUT
+          echo "rust-version=${VERSION}" >> $GITHUB_OUTPUT
+          
+          echo "📌 Master Release v${VERSION} orchestrator started"
+
+  # Trigger npm package publish
+  publish-npm:
+    needs: parse-version
+    runs-on: ubuntu-latest
+    if: github.event.inputs.skip-npm != 'true'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install dependencies
+        run: cd npm-packages && npm install
+
+      - name: Build packages
+        run: cd npm-packages && npm run pack:all
+
+      - name: Publish to npm
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPMJS_TOKEN }}
+        run: |
+          cd npm-packages
+          npm publish packages/mnp --access public
+          npm publish packages/mnp-material --access public
+          npm publish packages/mnp-mie --access public
+
+      - name: Publish to GitHub Packages
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cd npm-packages
+          npm config set registry "https://npm.pkg.github.com/${{ github.repository_owner }}"
+          npm publish packages/mnp
+          npm publish packages/mnp-material
+          npm publish packages/mnp-mie
+
+  # Trigger PyPI publish
+  publish-python:
+    needs: parse-version
+    runs-on: ubuntu-latest
+    if: github.event.inputs.skip-python != 'true'
+    strategy:
+      matrix:
+        package: [mnpbem-base, mnpbem-bem, mnpbem-greenfun, mnpbem-material, mnpbem-mesh2d, mnpbem-mie, mnpbem-misc, mnpbem-particles, mnpbem-simulation]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install build tools
+        run: |
+          python -m pip install --upgrade pip
+          pip install build twine
+
+      - name: Build package
+        run: |
+          cd mnpbem/${{ matrix.package }}
+          python -m build
+
+      - name: Publish to PyPI
+        env:
+          TWINE_USERNAME: __token__
+          TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
+        run: |
+          cd mnpbem/${{ matrix.package }}
+          twine upload dist/*
+
+  # Trigger NuGet publish
+  publish-nuget:
+    needs: parse-version
+    runs-on: windows-latest
+    if: github.event.inputs.skip-nuget != 'true'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '6.0.x'
+
+      - name: Restore dependencies
+        run: dotnet restore csharp-mnp-plasmon/
+
+      - name: Build
+        run: dotnet build csharp-mnp-plasmon/ -c Release --no-restore
+
+      - name: Test
+        run: dotnet test csharp-mnp-plasmon/ -c Release --no-build --verbosity normal
+
+      - name: Pack
+        run: dotnet pack csharp-mnp-plasmon/MnpPlasmon/MnpPlasmon.csproj -c Release -o artifacts
+
+      - name: Publish to NuGet.org
+        run: |
+          dotnet nuget push artifacts/*.nupkg `
+            --source "https://api.nuget.org/v3/index.json" `
+            --api-key "${{ secrets.NUGET_API_KEY }}" `
+            --skip-duplicate
+
+      - name: Publish to GitHub Packages
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          dotnet nuget push artifacts/*.nupkg `
+            --source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" `
+            --api-key "${{ secrets.GITHUB_TOKEN }}" `
+            --skip-duplicate
+
+  # Trigger Rust crates.io publish
+  publish-rust:
+    needs: parse-version
+    runs-on: ubuntu-latest
+    if: github.event.inputs.skip-rust != 'true'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+
+      - name: Verify package
+        run: |
+          cd rust-mnp-plasmon
+          cargo test
+
+      - name: Publish to crates.io
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+        run: |
+          cd rust-mnp-plasmon
+          cargo publish --token $CARGO_REGISTRY_TOKEN
+
+  summary:
+    needs: [publish-npm, publish-python, publish-nuget, publish-rust]
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Check publish results
+        run: |
+          echo "✅ Master Release Orchestration Complete!"
+          echo "📦 Packages published to:"
+          echo "  - npm: https://www.npmjs.com/~galihru?tab=packages"
+          echo "  - PyPI: https://pypi.org/user/galihru/"
+          echo "  - NuGet: https://www.nuget.org/profiles/galihru"
+          echo "  - Crates.io: https://crates.io/users/galihru"
+          echo ""
+          echo "🔗 View release: ${{ github.server_url }}/${{ github.repository }}/releases/tag/${{ github.event.release.tag_name }}"

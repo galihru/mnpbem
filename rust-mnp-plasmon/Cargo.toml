@@ -1,0 +1,33 @@
+[package]
+name = "mnp-plasmon"
+version = "0.1.0"
+edition = "2021"
+authors = ["galihru"]
+description = "Efficient Rust library for calculating optical response of metallic nanoparticles using Drude model and Rayleigh approximation. Supports Au, Ag, Al materials."
+repository = "https://github.com/galihru/mnpbem"
+homepage = "https://github.com/galihru/mnpbem"
+license = "GPL-3.0-only"
+readme = "README.md"
+keywords = ["plasmon", "nanoparticles", "optics", "drude", "rayleigh"]
+categories = ["science", "science::physics"]
+
+[dependencies]
+num-complex = "0.4"
+serde = { version = "1.0", features = ["derive"], optional = true }
+serde_json = { version = "1.0", optional = true }
+
+[dev-dependencies]
+approx = "0.5"
+
+[features]
+default = ["serde"]
+serde = ["dep:serde", "dep:serde_json"]
+
+[[example]]
+name = "basic_sphere"
+path = "examples/basic_sphere.rs"
+
+[lib]
+name = "mnp_plasmon"
+path = "src/lib.rs"
+crate-type = ["rlib"]

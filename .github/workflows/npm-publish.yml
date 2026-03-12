@@ -53,7 +53,7 @@ jobs:
         run: |
           printf '//npm.pkg.github.com/:_authToken=%s\n' "$GH_PKG_TOKEN" > .npmrc
           for pkg in packages/mnp-material packages/mnp-mie packages/mnp; do
-            (cd "$pkg" && npm publish --registry https://npm.pkg.github.com/ --access public)
+            (cd "$pkg" && npm publish --registry https://npm.pkg.github.com/ --access public) || true
           done
 
       # -- 3. Clean up .npmrc -----------------------------------------------

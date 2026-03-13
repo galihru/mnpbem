@@ -1,0 +1,77 @@
+name: Publish Ruby Gem
+
+on:
+  push:
+    tags:
+      - 'ruby-v*'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+          bundler-cache: true
+          working-directory: ruby-mnp-plasmon
+
+      - name: Run tests
+        run: |
+          cd ruby-mnp-plasmon
+          bundle exec rake test
+
+      - name: Build gem
+        run: |
+          cd ruby-mnp-plasmon
+          gem build mnp_plasmon.gemspec
+
+      - name: Configure RubyGems credentials
+        run: |
+          mkdir -p ~/.gem
+          cat > ~/.gem/credentials <<EOF
+          ---
+          :rubygems_api_key: ${{ secrets.RUBYGEMS_API_KEY }}
+          :github: Bearer ${{ secrets.GITHUB_TOKEN }}
+          EOF
+          chmod 0600 ~/.gem/credentials
+
+      - name: Publish to RubyGems
+        run: |
+          cd ruby-mnp-plasmon
+          set +e
+          output=$(gem push mnp_plasmon-*.gem 2>&1)
+          status=$?
+          set -e
+          echo "$output"
+          if [ $status -ne 0 ]; then
+            if echo "$output" | grep -qi "Repushing of gem versions is not allowed"; then
+              echo "gem version already published on RubyGems; continuing"
+            else
+              exit $status
+            fi
+          fi
+
+      - name: Publish to GitHub Packages (RubyGems)
+        run: |
+          cd ruby-mnp-plasmon
+          OWNER="${{ github.repository_owner }}"
+          set +e
+          output=$(gem push --key github --host "https://rubygems.pkg.github.com/${OWNER}" mnp_plasmon-*.gem 2>&1)
+          status=$?
+          set -e
+          echo "$output"
+          if [ $status -ne 0 ]; then
+            if echo "$output" | grep -Eqi "already exists|Repushing of gem versions is not allowed"; then
+              echo "gem version already published on GitHub Packages; continuing"
+            else
+              exit $status
+            fi
+          fi

@@ -25,6 +25,10 @@ on:
         description: 'Skip Crates.io publish'
         required: false
         default: 'false'
+      skip-ruby:
+        description: 'Skip RubyGems/GitHub Ruby publish'
+        required: false
+        default: 'false'
       skip-r-cran:
         description: 'Skip R CRAN check/build'
         required: false
@@ -52,6 +56,7 @@ jobs:
       python-version: ${{ steps.parse.outputs.python-version }}
       nuget-version: ${{ steps.parse.outputs.nuget-version }}
       rust-version: ${{ steps.parse.outputs.rust-version }}
+      ruby-version: ${{ steps.parse.outputs.ruby-version }}
     steps:
       - uses: actions/checkout@v4
 
@@ -70,6 +75,7 @@ jobs:
           echo "python-version=${VERSION}" >> $GITHUB_OUTPUT
           echo "nuget-version=${VERSION}" >> $GITHUB_OUTPUT
           echo "rust-version=${VERSION}" >> $GITHUB_OUTPUT
+          echo "ruby-version=${VERSION}" >> $GITHUB_OUTPUT
           
           echo "📌 Master Release v${VERSION} orchestrator started"
 
@@ -223,6 +229,74 @@ jobs:
             fi
           fi
 
+  # Trigger Ruby publish (RubyGems + GitHub Packages)
+  publish-ruby:
+    needs: parse-version
+    runs-on: ubuntu-latest
+    if: github.event.inputs.skip-ruby != 'true'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+          bundler-cache: true
+          working-directory: ruby-mnp-plasmon
+
+      - name: Run tests
+        run: |
+          cd ruby-mnp-plasmon
+          bundle exec rake test
+
+      - name: Build gem
+        run: |
+          cd ruby-mnp-plasmon
+          gem build mnp_plasmon.gemspec
+
+      - name: Configure RubyGems credentials
+        run: |
+          mkdir -p ~/.gem
+          cat > ~/.gem/credentials <<EOF
+          ---
+          :rubygems_api_key: ${{ secrets.RUBYGEMS_API_KEY }}
+          :github: Bearer ${{ secrets.GITHUB_TOKEN }}
+          EOF
+          chmod 0600 ~/.gem/credentials
+
+      - name: Publish to RubyGems
+        run: |
+          cd ruby-mnp-plasmon
+          set +e
+          output=$(gem push mnp_plasmon-*.gem 2>&1)
+          status=$?
+          set -e
+          echo "$output"
+          if [ $status -ne 0 ]; then
+            if echo "$output" | grep -qi "Repushing of gem versions is not allowed"; then
+              echo "gem version already published on RubyGems; continuing"
+            else
+              exit $status
+            fi
+          fi
+
+      - name: Publish to GitHub Packages (RubyGems)
+        run: |
+          cd ruby-mnp-plasmon
+          OWNER="${{ github.repository_owner }}"
+          set +e
+          output=$(gem push --key github --host "https://rubygems.pkg.github.com/${OWNER}" mnp_plasmon-*.gem 2>&1)
+          status=$?
+          set -e
+          echo "$output"
+          if [ $status -ne 0 ]; then
+            if echo "$output" | grep -Eqi "already exists|Repushing of gem versions is not allowed"; then
+              echo "gem version already published on GitHub Packages; continuing"
+            else
+              exit $status
+            fi
+          fi
+
   # Trigger R CRAN check/build (manual upload to CRAN)
   publish-r-cran:
     needs: parse-version
@@ -298,7 +372,7 @@ jobs:
         run: conan create conan-mnp-plasmon --build=missing -s build_type=Release
 
   summary:
-    needs: [publish-npm, publish-python, publish-nuget, publish-rust, publish-r-cran, publish-julia, publish-conan]
+    needs: [publish-npm, publish-python, publish-nuget, publish-rust, publish-ruby, publish-r-cran, publish-julia, publish-conan]
     runs-on: ubuntu-latest
     if: always()
     steps:
@@ -310,6 +384,7 @@ jobs:
           echo "  - PyPI: https://pypi.org/user/galihru/"
           echo "  - NuGet: https://www.nuget.org/profiles/galihru"
           echo "  - Crates.io: https://crates.io/users/galihru"
+          echo "  - RubyGems: https://rubygems.org/gems/mnp_plasmon"
           echo "  - R (CRAN-ready source): workflow artifact r-mnp-plasmon-source"
           echo "  - CRAN upload portal: https://cran.r-project.org/submit.html"
           echo ""

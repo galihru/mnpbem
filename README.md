@@ -66,67 +66,6 @@ with $k = \frac{2\pi n_m}{\lambda}$.
 | Ag | 3.810 | 0.0048 | 3.91 |
 | Al | 14.83 | 0.0980 | 1.24 |
 
-## Platform and Registry Status
-
-| Language | Package | Registry | Status |
-|---|---|---|---|
-| Python | mnpbem, mnp-plasmon | PyPI | Published |
-| JavaScript | @galihru/mnp, @galihru/mnp-material, @galihru/mnp-mie | npm | Published |
-| C# / .NET | MnpPlasmon | NuGet | Published |
-| Rust | mnp-plasmon | Crates.io | Published |
-| R | mnpPlasmonR | CRAN | Submission workflow ready (manual CRAN upload) |
-| Julia | MnpPlasmon | Julia General Registry | Registration in progress |
-| C / C++ | mnp-plasmon | vcpkg | Published |
-| C / C++ | mnp-plasmon | ConanCenter | Submission in review |
-
-## Installation
-
-### Python
-
-```bash
-pip install mnpbem
-# optional modular install
-pip install mnpbem-material mnpbem-mie
-```
-
-### JavaScript
-
-```bash
-npm install @galihru/mnp @galihru/mnp-material @galihru/mnp-mie
-```
-
-### C#
-
-```bash
-dotnet add package MnpPlasmon
-```
-
-### Rust
-
-```toml
-[dependencies]
-mnp-plasmon = "0.1"
-```
-
-### R
-
-```r
-install.packages("mnpPlasmonR")
-```
-
-### Julia
-
-```julia
-using Pkg
-Pkg.add("MnpPlasmon")
-```
-
-### Conan (C/C++)
-
-```bash
-conan install --requires="mnp-plasmon/0.1.0" --build=missing
-```
-
 ## Minimal Usage
 
 ### Python

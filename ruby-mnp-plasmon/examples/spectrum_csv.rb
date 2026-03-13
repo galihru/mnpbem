@@ -1,6 +1,6 @@
 require "csv"
 require "fileutils"
-require_relative "../lib/mnp_plasmon"
+require File.expand_path("../lib/mnp_plasmon.rb", __dir__)
 
 wavelengths = (400..700).step(5)
 out_path = File.expand_path("../../docs/example-data/ruby.csv", __dir__)

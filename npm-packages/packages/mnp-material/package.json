@@ -29,6 +29,10 @@
     "type": "git",
     "url": "https://github.com/galihru/mnpbem.git"
   },
+  "homepage": "https://github.com/galihru/mnpbem#readme",
+  "bugs": {
+    "url": "https://github.com/galihru/mnpbem/issues"
+  },
   "publishConfig": {
     "access": "public"
   },

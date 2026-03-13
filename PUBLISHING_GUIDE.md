@@ -121,6 +121,27 @@ Similar process to C library:
 
 ## Post-Publishing Verification
 
+### GitHub Profile Package Visibility
+
+If you want package cards to appear on the GitHub profile (the section people usually see under profile/package pages):
+
+1. Publish package to GitHub Packages under the same owner (`galihru`).
+2. Open package page on GitHub, then open package settings.
+3. Ensure visibility is set to public.
+4. Ensure package is connected to repository `galihru/mnpbem`.
+
+For npm packages, the registry endpoint is:
+
+```text
+https://npm.pkg.github.com/
+```
+
+### About "Used by" On Repository Page
+
+The "Used by" number is not manually configurable.
+GitHub computes it from dependency graph data of public repositories that depend on your packages/repository.
+So the practical way to make it appear is getting real downstream usage in public repos.
+
 ### Verify All Packages
 
 - [ ] C package visible on vcpkg.io

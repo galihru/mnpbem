@@ -1,0 +1,43 @@
+name: Feature request
+description: Suggest an enhancement
+title: "feature: "
+labels:
+  - enhancement
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for your idea. Please describe the proposal and expected impact.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem statement
+      description: What problem are you trying to solve?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Core physics model
+        - Package publishing/CI
+        - Documentation
+        - Examples and plots
+        - Performance
+        - Other
+  - type: textarea
+    id: references
+    attributes:
+      label: References
+      description: Links, papers, or related issues.

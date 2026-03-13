@@ -94,6 +94,36 @@ println(r.c_ext, " ", r.c_sca, " ", r.c_abs)
 sphere_response_t r = mnp_simulate_sphere_response("Au", 550.0, 25.0, 1.0);
 ```
 
+### JavaScript (npm)
+
+```bash
+npm install @galihru/mnp
+```
+
+```js
+import { sphereResponse } from "@galihru/mnp";
+
+const r = sphereResponse({ wavelengthNm: 550, radiusNm: 25, material: "Au" });
+console.log(r.cExt, r.cSca, r.cAbs);
+```
+
+## GitHub Packages And "Used by"
+
+To make packages visible under the GitHub profile package tab, publish to `npm.pkg.github.com` with public package visibility.
+If a package was published as private first, set it to public in package settings.
+
+The repository "Used by" count is automatic and appears when public repositories depend on this project/packages.
+It cannot be forced manually.
+
+## Community Health
+
+- Code of Conduct: .github/CODE_OF_CONDUCT.md
+- Contributing Guide: .github/CONTRIBUTING.md
+- Security Policy: .github/SECURITY.md
+- Issue Templates: .github/ISSUE_TEMPLATE/
+- Pull Request Template: .github/pull_request_template.md
+- Dependabot Config: .github/dependabot.yml
+
 ## Development
 
 This repository can regenerate cross-language example plots automatically from module source code.

@@ -155,52 +155,6 @@ println(r.c_ext, " ", r.c_sca, " ", r.c_abs)
 sphere_response_t r = mnp_simulate_sphere_response("Au", 550.0, 25.0, 1.0);
 ```
 
-## Release Pipeline
-
-A release tag triggers the master orchestrator workflow for language-specific publish jobs.
-
-```text
-GitHub Release (vX.Y.Z)
-  -> Python publish (PyPI)
-  -> JavaScript publish (npm)
-  -> C# publish (NuGet)
-  -> Rust publish (Crates.io)
-  -> R check and source artifact (manual CRAN upload)
-  -> Julia test and registration trigger path
-  -> Conan recipe validation path
-  -> C/C++ publish path (vcpkg)
-```
-
-Release command:
-
-```bash
-git tag v1.0.0
-git push origin v1.0.0
-```
-
-Workflow definition:
-
-- [.github/workflows/release-master.yml](.github/workflows/release-master.yml)
-
-## CI/CD and Security
-
-All pipelines run on GitHub Actions.
-
-- Trusted publishing (OIDC) is used where supported.
-- R package path runs R CMD check before CRAN submission.
-- Multi-platform build coverage is enforced for native targets.
-- License policy is GPL-3.0-only across implementations.
-
-Required repository secrets:
-
-| Secret | Purpose |
-|---|---|
-| PYPI_API_TOKEN | PyPI publishing |
-| NPMJS_API_TOKEN | npm publishing |
-| NUGET_API_KEY | NuGet publishing |
-| CARGO_TOKEN | Crates.io token mapped to CARGO_REGISTRY_TOKEN in workflow |
-| GH_TOKEN | Release automation and related publishing tasks |
-
 ## Author
 
 Galih Ridho Utomo  

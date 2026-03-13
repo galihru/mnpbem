@@ -1,12 +1,20 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
 
 namespace MnpPlasmon.Demo;
 
 class Program
 {
-    static void Main()
+    static void Main(string[] args)
     {
+        if (args.Length == 2 && args[0] == "--csv-out")
+        {
+            WriteCsv(args[1]);
+            return;
+        }
+
         Console.WriteLine("=== MNP Plasmon C# Demo ===\n");
 
         // List available materials
@@ -38,5 +46,22 @@ class Program
         // Detailed response at resonance
         var detailedResponse = MnpPlasmon.SimulateSphereResponse("Au", 550.0, 20.0, 1.33);
         MnpPlasmon.PrintResponse(detailedResponse);
+    }
+
+    static void WriteCsv(string outputPath)
+    {
+        Directory.CreateDirectory(Path.GetDirectoryName(outputPath) ?? ".");
+        using var writer = new StreamWriter(outputPath);
+        writer.WriteLine("wavelength_nm,c_ext,c_sca,c_abs");
+
+        for (int wl = 400; wl <= 700; wl += 5)
+        {
+            var response = MnpPlasmon.SimulateSphereResponse("Au", wl, 25.0, 1.33);
+            writer.WriteLine(string.Join(",",
+                wl.ToString(CultureInfo.InvariantCulture),
+                response.CExt.ToString("G17", CultureInfo.InvariantCulture),
+                response.CSca.ToString("G17", CultureInfo.InvariantCulture),
+                response.CAbs.ToString("G17", CultureInfo.InvariantCulture)));
+        }
     }
 }

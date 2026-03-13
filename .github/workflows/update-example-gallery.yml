@@ -1,0 +1,124 @@
+name: Update Example Gallery
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 2 * * *'
+  push:
+    branches: [main]
+    paths:
+      - 'mnpbem-material/**'
+      - 'mnpbem-mie/**'
+      - 'npm-packages/packages/mnp/**'
+      - 'npm-packages/packages/mnp-material/**'
+      - 'npm-packages/packages/mnp-mie/**'
+      - 'csharp-mnp-plasmon/**'
+      - 'rust-mnp-plasmon/**'
+      - 'r-mnp-plasmon/**'
+      - 'julia-mnp-plasmon/**'
+      - 'ruby-mnp-plasmon/**'
+      - 'c-mnp-plasmon/**'
+      - 'cxx-mnp-plasmon/**'
+      - 'tools/render_example_gallery.py'
+      - 'tools/generate_python_example.py'
+      - 'tools/generate_javascript_example.mjs'
+      - '.github/workflows/update-example-gallery.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  update-gallery:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '6.0.x'
+
+      - name: Setup Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+
+      - name: Setup R
+        uses: r-lib/actions/setup-r@v2
+
+      - name: Setup Julia
+        uses: julia-actions/setup-julia@v2
+        with:
+          version: '1.10'
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+
+      - name: Install Python plotting dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install matplotlib numpy
+
+      - name: Prepare output directories
+        run: mkdir -p docs/example-data docs/example-images
+
+      - name: Generate Python example data
+        run: python tools/generate_python_example.py
+
+      - name: Generate JavaScript example data
+        run: node tools/generate_javascript_example.mjs
+
+      - name: Generate C# example data
+        run: dotnet run --project csharp-mnp-plasmon/Demo -- --csv-out docs/example-data/csharp.csv
+
+      - name: Generate Rust example data
+        run: cargo run --manifest-path rust-mnp-plasmon/Cargo.toml --example spectrum_csv
+
+      - name: Generate R example data
+        run: Rscript r-mnp-plasmon/examples/spectrum_csv.R
+
+      - name: Generate Julia example data
+        run: julia --project=julia-mnp-plasmon julia-mnp-plasmon/examples/spectrum_csv.jl
+
+      - name: Generate Ruby example data
+        run: ruby ruby-mnp-plasmon/examples/spectrum_csv.rb
+
+      - name: Generate C example data
+        run: |
+          mkdir -p docs/example-data
+          gcc -O2 -I c-mnp-plasmon/src c-mnp-plasmon/examples/spectrum_csv.c c-mnp-plasmon/src/mnp_plasmon.c -lm -o c-mnp-plasmon/examples/spectrum_csv
+          ./c-mnp-plasmon/examples/spectrum_csv
+
+      - name: Generate C++ example data
+        run: |
+          g++ -std=c++17 -O2 -I cxx-mnp-plasmon/include cxx-mnp-plasmon/examples/spectrum_csv.cpp cxx-mnp-plasmon/src/mnp_plasmon.cpp -o cxx-mnp-plasmon/examples/spectrum_csv_cpp
+          ./cxx-mnp-plasmon/examples/spectrum_csv_cpp
+
+      - name: Render plots and refresh README section
+        run: python tools/render_example_gallery.py
+
+      - name: Commit updated gallery assets
+        run: |
+          if git diff --quiet -- README.md docs/example-data docs/example-images; then
+            echo "No gallery changes detected"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add README.md docs/example-data docs/example-images
+          git commit -m "Update example gallery assets [skip ci]"
+          git push

@@ -69,7 +69,7 @@ jobs:
           set -e
           echo "$output"
           if [ $status -ne 0 ]; then
-            if echo "$output" | grep -Eqi "already exists|Repushing of gem versions is not allowed"; then
+            if echo "$output" | grep -Eqi "already exists|already been pushed|Repushing of gem versions is not allowed"; then
               echo "gem version already published on GitHub Packages; continuing"
             else
               exit $status

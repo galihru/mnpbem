@@ -1,293 +1,212 @@
-# MNPBEM — Multi-Language Plasmonics Simulation Ecosystem
+# MNPBEM: Multi-Language Plasmonics Simulation Ecosystem
 
 [![License: GPL-3.0](https://img.shields.io/badge/license-GPL--3.0-blue.svg)](LICENSE)
 [![Release](https://img.shields.io/github/v/release/galihru/mnpbem)](https://github.com/galihru/mnpbem/releases)
 [![PyPI](https://img.shields.io/pypi/v/mnpbem.svg)](https://pypi.org/project/mnpbem/)
-[![Crates.io](https://img.shields.io/crates/v/mnp-plasmon.svg)](https://crates.io/crates/mnp-plasmon)
 [![npm](https://img.shields.io/npm/v/%40galihru%2Fmnp.svg)](https://www.npmjs.com/package/@galihru/mnp)
 [![NuGet](https://img.shields.io/nuget/v/MnpPlasmon.svg)](https://www.nuget.org/packages/MnpPlasmon/)
+[![Crates.io](https://img.shields.io/crates/v/mnp-plasmon.svg)](https://crates.io/crates/mnp-plasmon)
 
-Multi-language implementation of optical response calculations for metallic nanoparticles, based on the Drude dielectric model and the Rayleigh quasi-static approximation. Covers Python, JavaScript, C#, Rust, R, Julia, C/C++, and Conan.
+MNPBEM provides reproducible optical-response workflows for metallic nanoparticles, implemented across multiple programming languages.
+The core physical model combines the Drude dielectric function with the Rayleigh quasi-static approximation for spherical particles.
 
-## Contents
+## Scope
 
-1. [Physical Model](#physical-model)
-2. [Supported Platforms](#supported-platforms)
-3. [Installation](#installation)
-4. [Usage](#usage)
-5. [Package Index](#package-index)
-6. [Release Pipeline](#release-pipeline)
-7. [CI/CD and Security](#cicd-and-security)
-8. [Author](#author)
-9. [License](#license)
+This repository contains two aligned tracks:
 
----
+1. MNPBEM family (modular scientific workflow packages)
+2. MnpPlasmon family (lightweight cross-language plasmonics calculator)
 
 ## Physical Model
 
-### Drude Dielectric Function
+### Drude dielectric function
 
-The frequency-dependent permittivity of a dispersive metal is described by the Drude model:
+For a dispersive metal:
 
-$$\varepsilon(\omega) = \varepsilon_\infty - \frac{\omega_p^2}{\omega\,(\omega + i\gamma)}$$
+$$
+\varepsilon(\omega) = \varepsilon_\infty - \frac{\omega_p^2}{\omega(\omega + i\gamma)}
+$$
 
-| Symbol | Quantity | Unit |
-|--------|----------|------|
-| $\varepsilon_\infty$ | High-frequency dielectric constant | — |
-| $\omega_p$ | Plasma frequency | eV |
-| $\gamma$ | Damping (collision) rate | eV |
-| $\omega$ | Angular frequency of incident light | eV |
+Where:
 
-### Rayleigh Polarizability
+- $\varepsilon_\infty$: high-frequency dielectric constant
+- $\omega_p$: plasma frequency (eV)
+- $\gamma$: damping rate (eV)
+- $\omega$: angular frequency (eV)
 
-In the quasi-static (Rayleigh) limit, valid when the particle radius $a \ll \lambda$, the complex polarizability of a sphere is:
+### Rayleigh polarizability for a sphere
 
-$$\alpha(\omega) = 4\pi a^3\,\frac{\varepsilon_p(\omega) - \varepsilon_m}{\varepsilon_p(\omega) + 2\,\varepsilon_m}$$
+For $a \ll \lambda$:
 
-where $\varepsilon_p(\omega)$ is the particle permittivity and $\varepsilon_m$ is the real permittivity of the surrounding medium.
+$$
+\alpha(\omega) = 4\pi a^3 \frac{\varepsilon_p(\omega) - \varepsilon_m}{\varepsilon_p(\omega) + 2\varepsilon_m}
+$$
 
-### Optical Cross-Sections
+### Optical cross-sections
 
-The three observable cross-sections follow directly from $\alpha(\omega)$:
+$$
+\sigma_{ext} = \frac{4\pi}{k}\,\mathrm{Im}\left[\alpha(\omega)\right]
+$$
 
-$$\sigma_\text{ext} = \frac{4\pi}{k}\,\mathrm{Im}[\alpha(\omega)]$$
+$$
+\sigma_{sca} = \frac{k^4}{6\pi}\,\left|\alpha(\omega)\right|^2
+$$
 
-$$\sigma_\text{sca} = \frac{k^4}{6\pi}\,|\alpha(\omega)|^2$$
+$$
+\sigma_{abs} = \sigma_{ext} - \sigma_{sca}
+$$
 
-$$\sigma_\text{abs} = \sigma_\text{ext} - \sigma_\text{sca}$$
+with $k = \frac{2\pi n_m}{\lambda}$.
 
-where $k = 2\pi n_m/\lambda$ is the wave vector magnitude in the medium.
-
-### Built-in Material Parameters
+### Built-in material parameters
 
 | Material | $\omega_p$ (eV) | $\gamma$ (eV) | $\varepsilon_\infty$ |
-|----------|----------------|---------------|----------------------|
-| Au (Gold) | 3.106 | 0.0132 | 8.90 |
-| Ag (Silver) | 3.810 | 0.0048 | 3.91 |
-| Al (Aluminum) | 14.83 | 0.0980 | 1.24 |
+|---|---:|---:|---:|
+| Au | 3.106 | 0.0132 | 8.90 |
+| Ag | 3.810 | 0.0048 | 3.91 |
+| Al | 14.83 | 0.0980 | 1.24 |
 
----
+## Platform and Registry Status
 
-## Supported Platforms
-
-| Language | Package | Registry | Version |
-|----------|---------|----------|---------|
-| Python | `mnpbem`, `mnp-plasmon` | PyPI | [![PyPI](https://img.shields.io/pypi/v/mnpbem.svg)](https://pypi.org/project/mnpbem/) |
-| JavaScript | `@galihru/mnp` | npm | [![npm](https://img.shields.io/npm/v/%40galihru%2Fmnp.svg)](https://www.npmjs.com/package/@galihru/mnp) |
-| C# / .NET | `MnpPlasmon` | NuGet | [![NuGet](https://img.shields.io/nuget/v/MnpPlasmon.svg)](https://www.nuget.org/packages/MnpPlasmon/) |
-| Rust | `mnp-plasmon` | Crates.io | [![Crates.io](https://img.shields.io/crates/v/mnp-plasmon.svg)](https://crates.io/crates/mnp-plasmon) |
-| R | `mnpPlasmonR` | CRAN | [![CRAN](https://www.r-pkg.org/badges/version/mnpPlasmonR)](https://cran.r-project.org/package=mnpPlasmonR) |
-| Julia | `MnpPlasmon.jl` | Julia General Registry | [![Julia](https://img.shields.io/badge/julia-MnpPlasmon.jl-9558B2.svg)](https://github.com/galihru/mnpbem/tree/main/julia-mnp-plasmon) |
-| C / C++ | `mnp-plasmon` | vcpkg | — |
-| C / C++ | `mnp-plasmon` | Conan Center | [![Conan](https://img.shields.io/badge/conan-mnp--plasmon-blue.svg)](https://conan.io/center) |
-
----
+| Language | Package | Registry | Status |
+|---|---|---|---|
+| Python | mnpbem, mnp-plasmon | PyPI | Published |
+| JavaScript | @galihru/mnp, @galihru/mnp-material, @galihru/mnp-mie | npm | Published |
+| C# / .NET | MnpPlasmon | NuGet | Published |
+| Rust | mnp-plasmon | Crates.io | Published |
+| R | mnpPlasmonR | CRAN | Submission workflow ready (manual CRAN upload) |
+| Julia | MnpPlasmon | Julia General Registry | Registration in progress |
+| C / C++ | mnp-plasmon | vcpkg | Published |
+| C / C++ | mnp-plasmon | ConanCenter | Submission in review |
 
 ## Installation
 
-**Python**
+### Python
 
 ```bash
 pip install mnpbem
-# or individual submodules
+# optional modular install
 pip install mnpbem-material mnpbem-mie
 ```
 
-**JavaScript / TypeScript**
+### JavaScript
 
 ```bash
 npm install @galihru/mnp @galihru/mnp-material @galihru/mnp-mie
 ```
 
-**C# / .NET**
+### C#
 
 ```bash
 dotnet add package MnpPlasmon
 ```
 
-**Rust**
+### Rust
 
 ```toml
 [dependencies]
 mnp-plasmon = "0.1"
 ```
 
-**R**
+### R
 
 ```r
 install.packages("mnpPlasmonR")
 ```
 
-**Julia**
+### Julia
 
 ```julia
 using Pkg
 Pkg.add("MnpPlasmon")
 ```
 
-**C / C++ via Conan**
+### Conan (C/C++)
 
 ```bash
 conan install --requires="mnp-plasmon/0.1.0" --build=missing
 ```
 
----
+## Minimal Usage
 
-## Usage
-
-All implementations expose a `sphere_response` function that computes extinction, scattering, and absorption cross-sections for a spherical nanoparticle under the Rayleigh approximation.
-
-**Python**
+### Python
 
 ```python
 from mnp_plasmon import sphere_response
 
-result = sphere_response(wavelength_nm=550.0, radius_nm=25.0, material="Au")
-print(result.c_ext, result.c_sca, result.c_abs)
+r = sphere_response(wavelength_nm=550.0, radius_nm=25.0, material="Au")
+print(r.c_ext, r.c_sca, r.c_abs)
 ```
 
-**JavaScript**
-
-```javascript
-import { MnpPlasmon } from '@galihru/mnp';
-
-const result = MnpPlasmon.sphereResponse({ wavelength: 550, radius: 25, material: 'Au' });
-console.log(result.cExt, result.cSca, result.cAbs);
-```
-
-**C# (.NET)**
-
-```csharp
-using MnpPlasmon;
-
-var r = MnpPlasmon.SphereResponse(wavelengthNm: 550.0, radiusNm: 25.0, material: "Au");
-Console.WriteLine($"{r.CExt:F2} nm²");
-```
-
-**Rust**
-
-```rust
-use mnp_plasmon::sphere_response;
-
-let r = sphere_response(550.0, 25.0, "Au", 1.0)?;
-println!("{:.2} nm²", r.c_ext);
-```
-
-**R**
-
-```r
-library(mnpPlasmonR)
-
-r <- sphere_response(wavelength_nm = 550, radius_nm = 25, material = "Au")
-cat(r$c_ext, "nm²\n")
-```
-
-**C**
-
-```c
-#include "mnp_plasmon.h"
-
-sphere_result_t r = mnp_sphere_response(550.0, 25.0, "Au", 1.0);
-printf("%.2f nm²\n", r.c_ext);
-```
-
-**Julia**
+### Julia
 
 ```julia
 using MnpPlasmon
 
 r = sphere_response(550.0, 25.0, "Au")
-println(r.c_ext, " nm²")
+println(r.c_ext, " ", r.c_sca, " ", r.c_abs)
 ```
 
----
+### C
 
-## Package Index
+```c
+#include "mnp_plasmon.h"
 
-### Python — MNPBEM Ecosystem
-
-| Package | Role | Link |
-|---------|------|------|
-| `mnpbem` | Umbrella — installs all core submodules | [PyPI](https://pypi.org/project/mnpbem/) |
-| `mnpbem-base` | Registry and factory infrastructure for solver workflows | [PyPI](https://pypi.org/project/mnpbem-base/) |
-| `mnpbem-bem` | Linear-response BEM solver kernels | [PyPI](https://pypi.org/project/mnpbem-bem/) |
-| `mnpbem-greenfun` | Green-function kernels for wave propagation | [PyPI](https://pypi.org/project/mnpbem-greenfun/) |
-| `mnpbem-material` | Dispersive dielectric models and tabulated optical data | [PyPI](https://pypi.org/project/mnpbem-material/) |
-| `mnpbem-mesh2d` | Triangle-based geometry operators for 2D meshes | [PyPI](https://pypi.org/project/mnpbem-mesh2d/) |
-| `mnpbem-mie` | Rayleigh and Mie approximation routines | [PyPI](https://pypi.org/project/mnpbem-mie/) |
-| `mnpbem-misc` | Shared numerical utilities and unit conversion | [PyPI](https://pypi.org/project/mnpbem-misc/) |
-| `mnpbem-particles` | Geometric primitives for nanoparticles | [PyPI](https://pypi.org/project/mnpbem-particles/) |
-| `mnpbem-simulation` | Spectrum orchestration over wavelength grids | [PyPI](https://pypi.org/project/mnpbem-simulation/) |
-
-### JavaScript — npm
-
-| Package | Role |
-|---------|------|
-| [`@galihru/mnp`](https://www.npmjs.com/package/@galihru/mnp) | Core plasmon calculator |
-| [`@galihru/mnp-material`](https://www.npmjs.com/package/@galihru/mnp-material) | Material parameter definitions |
-| [`@galihru/mnp-mie`](https://www.npmjs.com/package/@galihru/mnp-mie) | Mie and Rayleigh approximations |
-
----
+sphere_response_t r = mnp_simulate_sphere_response("Au", 550.0, 25.0, 1.0);
+```
 
 ## Release Pipeline
 
-A single git tag triggers simultaneous publication to all registries:
+A release tag triggers the master orchestrator workflow for language-specific publish jobs.
 
-```
+```text
 GitHub Release (vX.Y.Z)
-    |
-    +-- Publish Python      --> PyPI
-    +-- Publish JavaScript  --> npm
-    +-- Publish C# (.NET)   --> NuGet
-    +-- Publish Rust        --> Crates.io
-    +-- R CMD check         --> CRAN (manual upload to cran.r-project.org/submit.html)
-    +-- Julia tests         --> Julia General Registry (trigger via @JuliaRegistrator)
-    +-- Conan recipe check  --> Conan Center (manual PR to conan-center-index)
-    +-- Publish C / C++     --> vcpkg
+  -> Python publish (PyPI)
+  -> JavaScript publish (npm)
+  -> C# publish (NuGet)
+  -> Rust publish (Crates.io)
+  -> R check and source artifact (manual CRAN upload)
+  -> Julia test and registration trigger path
+  -> Conan recipe validation path
+  -> C/C++ publish path (vcpkg)
 ```
 
-To create a release:
+Release command:
 
 ```bash
 git tag v1.0.0
 git push origin v1.0.0
 ```
 
-See [`.github/workflows/release-master.yml`](.github/workflows/release-master.yml) for the full workflow definition.
+Workflow definition:
 
----
+- [.github/workflows/release-master.yml](.github/workflows/release-master.yml)
 
 ## CI/CD and Security
 
-All workflows run on GitHub Actions.
+All pipelines run on GitHub Actions.
 
-- Trusted publishing (OIDC) for PyPI — no long-lived token stored in secrets.
-- `R CMD check --as-cran` runs before any CRAN upload.
-- Build matrix covers Linux, macOS, and Windows for C/C++ targets.
-- GPL-3.0 license verified across all packages.
+- Trusted publishing (OIDC) is used where supported.
+- R package path runs R CMD check before CRAN submission.
+- Multi-platform build coverage is enforced for native targets.
+- License policy is GPL-3.0-only across implementations.
 
-**Required secrets for maintainers:**
+Required repository secrets:
 
 | Secret | Purpose |
-|--------|---------|
-| `PYPI_API_TOKEN` | PyPI upload token |
-| `NPMJS_API_TOKEN` | npm publish token |
-| `NUGET_API_KEY` | NuGet.org API key |
-| `CARGO_TOKEN` | Crates.io API key (mapped to `CARGO_REGISTRY_TOKEN` in workflow) |
-| `GH_TOKEN` | GitHub Packages and release automation |
-
----
+|---|---|
+| PYPI_API_TOKEN | PyPI publishing |
+| NPMJS_API_TOKEN | npm publishing |
+| NUGET_API_KEY | NuGet publishing |
+| CARGO_TOKEN | Crates.io token mapped to CARGO_REGISTRY_TOKEN in workflow |
+| GH_TOKEN | Release automation and related publishing tasks |
 
 ## Author
 
 Galih Ridho Utomo  
 g4lihru@students.unnes.ac.id  
-[github.com/galihru](https://github.com/galihru) — [npm](https://www.npmjs.com/~galihru) — [PyPI](https://pypi.org/user/galihru/) — [NuGet](https://www.nuget.org/profiles/galihru) — [Crates.io](https://crates.io/users/galihru)
-
----
+[GitHub profile](https://github.com/galihru)
 
 ## License
 
-GPL-3.0-only. See [LICENSE](LICENSE) for the full text.
-
-All language implementations (Python, JavaScript, C#, Rust, R, C, C++) are subject to the same license.
+GPL-3.0-only. See [LICENSE](LICENSE).
